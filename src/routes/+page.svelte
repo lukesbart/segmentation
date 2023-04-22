@@ -4,9 +4,19 @@
 <script lang="ts"> 
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css'
-const notyf = new Notyf({
-    duration: 1500,
-});
+
+import {onMount} from 'svelte'
+
+let notyf: Object;
+
+onMount(() => {
+    notyf = new Notyf({
+        duration: 1500
+    })
+
+    getLocalStorageItems()
+})
+
 
 import {Simulator} from './sim.mjs'
 import Segment from './segment.svelte'
@@ -196,8 +206,6 @@ function getLocalStorageItems() {
         console.log(e.message)
     }
 }
-
-getLocalStorageItems()
 
 function setBuildFromMemory(buildName) {
     // Get index of build for now
