@@ -13,7 +13,6 @@ let resetLengthInput = 1;
 
 const sim = new Simulator();
 
-// sim.buildDefault();
 sim.createNewDefaultAddressSpace();
 
 console.log(sim.pas);
@@ -84,7 +83,7 @@ function createNewAddressSpace() {
 }
 
 // Enables checks to prevent app from breaking when addressSpaceList is empty
-$: pasEmpty = sim.pas.addressSpaceList.length === 0 ? true : false;
+$: pasEmpty = sim.pas.addressSpaceList.length === 0;
 
 let addressTranslationValue: number
 
@@ -227,8 +226,8 @@ function setBuildFromMemory(buildName) {
         </select>
         <br>
         <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
-        <p>Translation: {virtualAddressToPhysical !== null ? virtualAddressToPhysical : 'N/A'}</p>
-        <p>Explicit Segment Address: <span class="text-pink-500">{addressTranslationResult !== null && addressTranslationResult !== "Segmentation Fault" ? Simulator.segmentType[addressTranslationResult.toLowerCase()].number.toString(2).padStart(2, '0') : ""}</span>{addressTranslationValue && addressTranslationResult !== "Segmentation Fault" ? (addressTranslationValue - sim.pas.addressSpaceList[currentAddressSpace].segmentList[Simulator.segmentType[addressTranslationResult.toLowerCase()].number].vaBase).toString(2).padStart(sim.pas.vaLength-2, '0') : "N/A"}</p>
+        <p>Physical: {virtualAddressToPhysical !== null ? virtualAddressToPhysical : 'N/A'}</p>
+        <p>Explicit: <span class="text-pink-500">{addressTranslationResult !== null && addressTranslationResult !== "Segmentation Fault" ? Simulator.segmentType[addressTranslationResult.toLowerCase()].number.toString(2).padStart(2, '0') : ""}</span>{addressTranslationValue && addressTranslationResult !== "Segmentation Fault" ? (addressTranslationValue - sim.pas.addressSpaceList[currentAddressSpace].segmentList[Simulator.segmentType[addressTranslationResult.toLowerCase()].number].vaBase).toString(2).padStart(sim.pas.vaLength-2, '0') : "N/A"}</p>
         <br> 
     </div>
     <div style="position: relative; right: 0; text-align: right; display: inline-block;">
@@ -242,9 +241,7 @@ function setBuildFromMemory(buildName) {
     </div>
 </div>
 
-{#if errorMessage}
-    <p style="color: red; text-align: center;">{errorMessage}</p>
-{/if}
+<p style="color: red; text-align: center;">{errorMessage}</p>
 
 <p style="text-align: center;" class="text-xl">Virtual Address Space {currentAddressSpace}</p>
 <div style="color: white;" class="w-screen h-28 bg-gray-800 select-none">
@@ -253,7 +250,8 @@ function setBuildFromMemory(buildName) {
     <div class="absolute left-1/2 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute left-3/4 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
-    {#if addressTranslationValue}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(addressTranslationValue/sim.pas.vaSize)*100}%;"></div>{/if}
+    {#if addressTranslationValue && virtualAddressToPhysical !== "Segmentation Fault"}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(addressTranslationValue/sim.pas.vaSize)*100}%;"></div>{/if}
+    {#if addressTranslationValue && virtualAddressToPhysical === "Segmentation Fault"}<div class="absolute border-l-4 h-20 border-solid border-x-rose-600 z-20" style="left: {(addressTranslationValue/sim.pas.vaSize)*100}%"></div>{/if}
     <div class="flex {animation}">
         <div class="h-20"></div>
 
@@ -284,32 +282,6 @@ function setBuildFromMemory(buildName) {
 </div>
 
 <div style="display: flex; justify-content: center;">
-    <!-- <table style="margin-right: 25px;">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Size</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>AS0</td>
-                <td>1024</td>
-            </tr>
-            <tr>
-                <td>AS1</td>
-                <td>1024</td>
-            </tr>
-            <tr>
-                <td>AS2</td>
-                <td>1024</td>
-            </tr>
-            <tr>
-                <td>AS3</td>
-                <td>1024</td>
-            </tr>
-        </tbody>
-    </table> -->
     <table class="text-center">
         <thead>
             <tr class="bg-gray-900">
@@ -364,6 +336,7 @@ function setBuildFromMemory(buildName) {
     <div class="absolute left-875 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
     {#if virtualAddressToPhysical && virtualAddressToPhysical !== "Segmentation Fault"}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;"></div>{/if}
+    
 
     <div class="flex">
         <div class="h-20"></div>
@@ -396,30 +369,26 @@ function setBuildFromMemory(buildName) {
 
 <br><br>
 <div class="text-center">
-    <h2 class="text-3xl text-center">Segmentation Presets</h2>
+    <h2 class="text-3xl text-center">Simulation Presets</h2>
     <br>
     {#each storedBuilds as build}
-        <button on:click={() => setBuildFromMemory(build.name)} class="bg-green-600 p-2 rounded-md mr-2">{build.name}</button>
+        <button on:click={() => setBuildFromMemory(build.name)} class="bg-green-900 p-2 rounded-md mr-2">{build.name}</button>
     {/each}
     <br><br>
     <input type="text" placeholder="Build name" bind:value={buildName} class="bg-gray-800">
-    <button on:click={() => saveBuild()} class="bg-amber-800 p-2">Save Build</button>
-    <button on:click={() => outputBuild()} class="bg-cyan-700 p-2">Output Build</button>
+    <button on:click={() => saveBuild()} class="bg-blue-900 p-2 rounded-md">Save Build</button>
+    <button on:click={() => outputBuild()} class="bg-cyan-900 p-2 rounded-md">Output Build</button>
 
     <br><br>
 
     <form on:submit|preventDefault={(e) => buildFromJson(e.target[0].value)}>
         <textarea rows="20" cols="80" id="jsonInput" name="jsonInput" value={jsonOutput} class="border-2 border-black bg-gray-600" />
         <br>
-        <button type="submit" class="bg-cyan-800 p-2 w-30 h-10">Submit JSON</button>
+        <button type="submit" class="bg-cyan-900 p-2 w-30 h-10 rounded-md">Submit JSON</button>
     </form>
 </div>
 
 <style>
-    /* input, button {
-        border: 2px solid #000;
-    } */
-
     select {
         @apply bg-gray-800;
     }

@@ -117,8 +117,6 @@ class Simulator {
     segment.bounds = newBounds;
   }
 
-    // Break all this into separate pieces, functions below should be moved into a simulator class which is the middleman between the interface and the different classes
-
   createAddressSpace() {
     const newVirtualAddressSpace = new VirtualAddressSpace();
     
