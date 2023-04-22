@@ -2,6 +2,12 @@
 <title>Segmentation Simulator</title>
 
 <script lang="ts"> 
+import { Notyf } from 'notyf';
+import 'notyf/notyf.min.css'
+const notyf = new Notyf({
+    duration: 1500,
+});
+
 import {Simulator} from './sim.mjs'
 import Segment from './segment.svelte'
 
@@ -58,14 +64,8 @@ function editSegment(newSize: string | null, newBase: string | null, newGrowDire
     sim.pas = sim.pas    
 }
 
-let errorMessage = "";
-
 function displayError(error: string) {
-    errorMessage = error;
-    console.log("You called")
-    setTimeout(() => {
-            errorMessage = "";
-    }, 2000)
+    notyf.error(error)
 }
 
 function deleteAddressSpace() {
@@ -240,8 +240,6 @@ function setBuildFromMemory(buildName) {
         {/key}
     </div>
 </div>
-
-<p style="color: red; text-align: center;">{errorMessage}</p>
 
 <p style="text-align: center;" class="text-xl">Virtual Address Space {currentAddressSpace}</p>
 <div style="color: white;" class="w-screen h-28 bg-gray-800 select-none">
