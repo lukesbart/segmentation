@@ -11,12 +11,9 @@ let notyf: Object;
 
 onMount(() => {
     notyf = new Notyf({
-        duration: 1500
+        duration: 2000
     })
-
-    getLocalStorageItems()
 })
-
 
 import {Simulator} from './sim.mjs'
 import Segment from './segment.svelte'
@@ -30,8 +27,6 @@ let resetLengthInput = 1;
 const sim = new Simulator();
 
 sim.createNewDefaultAddressSpace();
-
-console.log(sim.pas);
 
 let currentAddressSpace = 0;
 
@@ -207,6 +202,10 @@ function getLocalStorageItems() {
     }
 }
 
+if (typeof localStorage !== undefined) {
+    getLocalStorageItems()
+}
+
 function setBuildFromMemory(buildName) {
     // Get index of build for now
     let buildIndx: number;
@@ -219,6 +218,20 @@ function setBuildFromMemory(buildName) {
     }
 
     buildFromJson(storedBuilds[buildIndx]["build"])
+}
+
+function deleteBuild(buildName) {
+    for (let i = 0; i < storedBuilds.length; i++) {
+        if (storedBuilds[i].name === buildName) {
+            storedBuilds.splice(i, 1)
+            storedBuilds = storedBuilds;
+
+
+            let buildsJSON = JSON.stringify(storedBuilds);
+            localStorage.setItem('builds', buildsJSON)
+            break;
+        }
+    }
 }
 </script>
 
@@ -378,7 +391,8 @@ function setBuildFromMemory(buildName) {
     <h2 class="text-3xl text-center">Simulation Presets</h2>
     <br>
     {#each storedBuilds as build}
-        <button on:click={() => setBuildFromMemory(build.name)} class="bg-green-900 p-2 rounded-md mr-2">{build.name}</button>
+        <button on:click={() => setBuildFromMemory(build.name)} class="bg-green-800 p-2 rounded-md">{build.name}</button>
+        <button on:click={() => deleteBuild(build.name)} class="bg-red-700 p-2 rounded-md mr-2"><i class="bi-trash" style="color: white;"></i></button>
     {/each}
     <br><br>
     <input type="text" placeholder="Build name" bind:value={buildName} class="bg-gray-800">
