@@ -10,6 +10,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:unit": "vitest",
+		"coverage": "vitest run --coverage",
 		"lint": "eslint ."
 	},
 	"devDependencies": {
@@ -18,7 +19,9 @@
 		"@sveltejs/kit": "^1.5.0",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
+		"@vitest/coverage-c8": "^0.30.1",
 		"autoprefixer": "^10.4.14",
+		"c8": "^7.13.0",
 		"eslint": "^8.28.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"postcss": "^8.4.23",
@@ -27,11 +30,11 @@
 		"tailwindcss": "^3.3.1",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
-		"vite": "^4.2.0",
-		"vitest": "^0.25.3"
+		"vite": "^4.2.0"
 	},
 	"type": "module",
 	"dependencies": {
-		"notyf": "^3.10.0"
+		"notyf": "^3.10.0",
+		"vitest": "^0.30.1"
 	}
 }
