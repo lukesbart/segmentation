@@ -5,21 +5,24 @@
 import {Simulator} from './sim'
 import PhysicalAddressSpace from './components/PhysicalAddressSpace.svelte';
 import VirtualAddressSpace from './components/VirtualAddressSpace.svelte';
+import { translateAddressToDecimal, translateToBase } from './uiUtils/addressTranslation';
+import growDirection from './constants/growDirection';
 
 import { Notyf } from 'notyf';
-    import 'notyf/notyf.min.css'
-    import { onMount } from 'svelte';
+import 'notyf/notyf.min.css'
+import { onMount } from 'svelte';
 
-    let notyf: Object;
-    onMount(() => {
-        notyf = new Notyf({
-            duration: 2000
-        })
+
+let notyf: object;
+onMount(() => {
+    notyf = new Notyf({
+        duration: 2000
     })
+})
 
-    export function displayError(message: string) {
-        notyf.error(message);
-    }
+function displayError(message: string) {
+    notyf.error(message);
+}
 
 // Change the value whenever an error occurs in the table,
 // multiplying it by -1 is an arbitary value that keeps this counter from getting to a high value, 
@@ -108,8 +111,8 @@ function changeVALength(newVaLength: number) {
     }
 }
 
-let currentSegmentNumber: string;
-let currentSegmentOffset: string;
+// let currentSegmentNumber: string;
+// let currentSegmentOffset: string;
 
 // Enables checks to prevent app from breaking when addressSpaceList is empty
 $: pasEmpty = sim.pas.addressSpaceList.length === 0;
@@ -117,39 +120,41 @@ $: pasEmpty = sim.pas.addressSpaceList.length === 0;
 let addressInputValue:  string
 
 let addressTranslationBase = 10;
-let addressInputBase = 10;
 
 // Logic that should be moved into sim
-function translateAddress(currentAddressSpace: number, addressTranslationVal: number, base: number) {
+function translateAddress(currentAddressSpace: number, addressTranslationVal: number) {
     if(addressTranslationVal < 0) {
-        return "N/A";
+        return null;
     }
 
-    let segment = sim.addressInSegment(currentAddressSpace, addressTranslationValue!);
+    let translatedAddress = sim.translateVirtualAddressToPhysicalAddress(currentAddressSpace, addressTranslationVal)
 
-    if (segment === "Segmentation Fault") {
-        return segment;
-    }
-    
-    let translation = (segment.base - segment.vaBase) + addressTranslationVal;
-
-    [currentSegmentNumber, currentSegmentOffset] = sim.explicitAddress(segment, addressTranslationVal)
-
-    if (base === 10) {
-        return translation;
-    }
-
-    if (base === 2) {
-        return translation.toString(base).padStart(12, '0')+"b"
-    }
-
-    return "0x" + translation.toString(base).toUpperCase()
+    return translatedAddress;
 }
 
-$: addressTranslationValue = addressInputValue !== undefined && addressInputValue !== null ? parseInt(addressInputValue, addressInputBase) : null
-$: addressTranslationResult = addressTranslationValue !== undefined && addressTranslationValue !== null && !pasEmpty ? sim.translateVirtualToPhysicalAddress(currentAddressSpace, addressTranslationValue) : null
-$: virtualAddressToPhysical = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue, addressTranslationBase) : null
-$: virtualAddressToPhysicalDecimal = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue, 10) : null;
+function calculateSegmentOffset() {
+    if (currentSegment.growDirection === growDirection.Negative) {
+        return Math.abs(((currentSegment.vaBase - 1) - addressTranslationValue!)).toString(2).padStart(sim.pas.vaLength - 2, '0');
+    }
+
+
+
+    return Math.abs((addressTranslationValue! - currentSegment.base)).toString(2).padStart(sim.pas.vaLength - 2, '0');
+}
+
+$: addressTranslationValue = addressInputValue !== undefined && addressInputValue !== null ? translateAddressToDecimal(addressInputValue) : null;
+$: vasIndicatorText = addressTranslationValue !== null ? translateToBase(addressTranslationValue, addressTranslationBase) : null;
+
+$: physicalAddressTranslationDecimalValue = addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue) : null
+$: pasIndicatorText = physicalAddressTranslationDecimalValue !== null ? translateToBase(physicalAddressTranslationDecimalValue, addressTranslationBase) : null;
+
+$: currentSegment = addressTranslationValue !== null ? sim.addressInSegment(currentAddressSpace, addressTranslationValue) : null;
+$: currentSegmentNumber = currentSegment !== null ? currentSegment.type.number.toString(2).padStart(2, '0') : null;
+$: currentSegmentOffset = currentSegment !== null && addressTranslationValue !== null ? calculateSegmentOffset() : null;
+
+$: addressTranslationResult = addressTranslationValue !== undefined && addressTranslationValue !== null && !pasEmpty ? sim.segmentNameFromVirtualAddress(currentAddressSpace, addressTranslationValue) : null
+$: virtualAddressToPhysical = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue) : null
+$: virtualAddressToPhysicalDecimal = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue) : null;
 
 let animation = "";
 
@@ -217,8 +222,12 @@ if (typeof localStorage !== undefined) {
     getLocalStorageItems()
 }
 
-function setBuildFromMemory(buildName: string) {
+function setBuildFromMemory(buildName: string): void {
     // Get index of build for now
+   if (!confirm("Are you sure you want to switch presets?")) {
+        return;
+   }
+
     let buildIndx: number;
 
     for (let i = 0; i < storedBuilds.length; i++) {
@@ -255,18 +264,19 @@ function deleteBuild(buildName: string) {
 <div class="flex w-full">
     <div style="margin-right: 50%">
         <label for="translateVA">Address Translation:</label>
-        {#if addressInputBase === 16}
+        <!-- {#if addressInputBase === 16}
             <input type="text" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
         {:else}
             <input type="number" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
-        {/if}
+        {/if} -->
+        <input type="text" bind:value={addressInputValue} id="translateVA" disabled={pasEmpty} class="bg-gray-900">
         <br>
-        <label for="">From:</label>
+        <!-- <label for="">From:</label>
         <select name="" id="" bind:value={addressInputBase} class="rounded-md">
             <option value="{10}">Dec</option>
             <option value="{16}">Hex</option>
             <option value="{2}">Bin</option>
-        </select>
+        </select> -->
         <label for="" class="ml-5">To:</label>
         <select name="" id="" bind:value={addressTranslationBase} class="mt-2 rounded-md">
             <option value="{10}" selected>Dec</option>
@@ -276,28 +286,28 @@ function deleteBuild(buildName: string) {
         <br>
         <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
         <p>Physical: {virtualAddressToPhysical !== null ? virtualAddressToPhysical : 'N/A'}</p>
-        <p>Explicit: <span class="text-pink-500">{addressTranslationResult !== null && addressTranslationResult !== "Segmentation Fault" && currentSegmentNumber ? currentSegmentNumber : ""}</span>{addressTranslationValue !== null && addressTranslationValue !== undefined && addressTranslationResult !== "Segmentation Fault" && currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</p>
+        <p>Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span><span>{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
         <br> 
     </div>
-    <div style="position: relative; right: 0; text-align: right; display: inline-block;">
+    <div class="relative right-0 text-right inline-block">
         {#key resetLengthInput}
             <label for="">PA Length</label>
-            <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(e.target.value)} class="bg-gray-900">
+            <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))} class="bg-gray-900">
             <br>
             <label for="">VA Length</label>
-            <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(e.target.value)} class="bg-gray-900">
+            <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))} class="bg-gray-900">
         {/key}
     </div>
 </div>
 
-<VirtualAddressSpace virtualAddressToPhysical={virtualAddressToPhysical} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} currentAddressSpace={currentAddressSpace} animation={animation} addressTranslationResult={addressTranslationResult} addressTranslationBase={addressTranslationBase}/>
+<VirtualAddressSpace currentSegment={currentSegment} virtualAddressToPhysical={virtualAddressToPhysical} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} currentAddressSpace={currentAddressSpace} animation={animation} addressTranslationResult={addressTranslationResult} vasIndicatorText={vasIndicatorText}/>
 
 <!-- <div style="text-align: center;">
     <button on:click={() => {currentAddressSpace--; animateDirection("left")}} disabled={currentAddressSpace === 0 || pasEmpty} class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50">Previous Address Space</button>
     <button on:click={() => {currentAddressSpace++; animateDirection("right")}} disabled={currentAddressSpace === sim.pas.addressSpaceList.length - 1 || pasEmpty} class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50">Next Address Space</button>
 </div> -->
 
-<div class="flex justify-center items-center mt-6">
+<div class="flex justify-center items-center mt-2">
     <button on:click={() => {currentAddressSpace--; animateDirection("left")}} disabled={currentAddressSpace === 0 || pasEmpty} class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10" title="Previous Address Space"><i class="bi bi-arrow-left-circle-fill"></i></button>
     <table class="text-center mx-2">
         <thead>
@@ -335,12 +345,12 @@ function deleteBuild(buildName: string) {
     <button on:click={() => {currentAddressSpace++; animateDirection("right")}} disabled={currentAddressSpace === sim.pas.addressSpaceList.length - 1 || pasEmpty} class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10" title="Next Address Space"><i class="bi bi-arrow-right-circle-fill"></i></button>
 </div>
 
-<div class="text-center mt-4 mb-6">
+<div class="text-center mt-4 mb-3">
     <button on:click={() => deleteAddressSpace()} disabled={pasEmpty} class="enabled:bg-red-600 disabled:bg-gray-600 rounded-md">Delete Address Space</button>
     <button on:click={() => createNewAddressSpace()} disabled={sim.pas.getPercentFull() === 1} class="enabled:bg-blue-600 disabled:bg-gray-600 rounded-md">New Address Space</button> 
 </div>
 
-<PhysicalAddressSpace virtualAddressToPhysical={virtualAddressToPhysical} virtualAddressToPhysicalDecimal={virtualAddressToPhysicalDecimal} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} bind:currentAddressSpace={currentAddressSpace} percentFull={Math.ceil(sim.pas.getPercentFull()*100)} />
+<PhysicalAddressSpace virtualAddressToPhysical={virtualAddressToPhysical} pasIndicatorText={pasIndicatorText} virtualAddressToPhysicalDecimal={virtualAddressToPhysicalDecimal} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} bind:currentAddressSpace={currentAddressSpace} percentFull={Math.ceil(sim.pas.getPercentFull()*100)} />
 
 <br><br>
 <div class="text-center">
@@ -348,7 +358,7 @@ function deleteBuild(buildName: string) {
     <br>
     {#each storedBuilds as build}
         <button on:click={() => setBuildFromMemory(build.name)} class="bg-green-800 p-2 rounded-md">{build.name}</button>
-        <button on:click={() => deleteBuild(build.name)} class="bg-red-700 p-2 rounded-md mr-2"><i class="bi-trash" style="color: white;"></i></button>
+        <button on:click={() => deleteBuild(build.name)} class="bg-red-700 p-2 rounded-md mr-2"><i class="bi-trash text-white"></i></button>
     {/each}
     <br><br>
     <input type="text" placeholder="Build name" bind:value={buildName} class="bg-gray-800">

@@ -3,6 +3,7 @@
     import type { Simulator } from "../sim";
 
     import { addressRange } from "../uiUtils/addressRange";
+    import { setIndicatorTextPosition } from "../uiUtils/setIndicatorTextPosition";
 
     export let virtualAddressToPhysical: number | string;
     export let virtualAddressToPhysicalDecimal: number;
@@ -12,6 +13,8 @@
     export let currentAddressSpace: number;
     export let percentFull: number;
 
+    export let pasIndicatorText: string;    
+    $: indicatorTextPosition = addressTranslationValue !== null && addressTranslationValue !== undefined ? setIndicatorTextPosition(virtualAddressToPhysicalDecimal, sim.pas.paSize) : 'left: 0%;';
 </script>
 
 <p class="text-center text-xl">Physical Address Space</p>
@@ -26,7 +29,7 @@
     <div class="absolute left-3/4 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute left-875 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
-    {#if virtualAddressToPhysical && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue > 0}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;"></div>{/if}
+    {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue >= 0}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;"></div>{/if}
     
 
     <div class="flex">
@@ -35,7 +38,7 @@
             {#each sim.pas.addressSpaceList as addressSpace}
                 {#each addressSpace.segmentList as segment}
                     {#if segment.size > 0}
-                        <div on:click={() => currentAddressSpace = sim.pas.addressSpaceList.indexOf(addressSpace)} on:keypress={() => {}}>
+                        <div on:click={() => currentAddressSpace = sim.pas.addressSpaceList.indexOf(addressSpace)} on:keypress={() => currentAddressSpace = sim.pas.addressSpaceList.indexOf(addressSpace)}>
                             <Segment segmentGrowDirection={segment.growDirection} segmentName={addressSpace.id+segment.type.name[0]} segmentWidth={segment.size/sim.pas.paSize} segmentPosition={segment.base/sim.pas.paSize} active={addressSpace === sim.pas.addressSpaceList[currentAddressSpace]}/>
                         </div>
                     {/if}
@@ -52,6 +55,6 @@
                 <span style="right: 0; position: absolute; padding: 0;">{num}</span>
             {/if}
         {/each}
-        {#if virtualAddressToPhysical && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue > 0}<p class="text-teal-300 inline-block absolute z-10" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;">{virtualAddressToPhysical}</p>{/if}
+        {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue >= 0}<p class="text-teal-300 inline-block absolute z-10 backdrop-blur-3xl" style="{indicatorTextPosition}">{pasIndicatorText}</p>{/if}
     </div>  
 </div>
