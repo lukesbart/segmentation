@@ -46,23 +46,23 @@ class PhysicalAddressSpace {
 
       // Positive and negative grow direction segments share same base if they are adjacent
       // Segments can't be created in overlapping space
-      // if (segment.growDirection === -1 && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize + 2, this.segmentList[i].base, this.segmentList[i].bounds))) {
+      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection + 2, this.segmentList[i].base, this.segmentList[i].bounds))) {
+        return false;
+      } else if (segmentGrowDirection === growDirection.Positive && ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) || (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) || (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds)))) {
+        return false;
+      }
+
+      // if (segmentGrowDirection === growDirection.Negative && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
       //   return false;
-      // } else if (segment.growDirection === 1 && ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === 1) || (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === -1) || (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds)))) {
+      // } else if (segmentGrowDirection === growDirection.Positive && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
       //   return false;
       // }
 
-      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
-        return false;
-      } else if (segmentGrowDirection === growDirection.Positive && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
-        return false;
-      }
-
-      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase + newSize * segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
-        return false;
-      } else if(segmentGrowDirection == growDirection.Positive && (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds))) {
-        return false;
-      }
+      // if (segmentGrowDirection === growDirection.Negative && (inRange(newBase + newSize * segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
+      //   return false;
+      // } else if(segmentGrowDirection == growDirection.Positive && (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds))) {
+      //   return false;
+      // }
     }
   
     return true;
@@ -81,7 +81,7 @@ class PhysicalAddressSpace {
   }
 
   editVaLength(newVaLength: number) {
-    let vaSize = 2 ** newVaLength;
+    const vaSize = 2 ** newVaLength;
 
     for (let i = 0; i < this.addressSpaceList.length; i++) {
       this.addressSpaceList[i].vaLength = newVaLength;
@@ -235,17 +235,16 @@ class VirtualAddressSpace {
     }
 
     // If I want to be typesafe about this, change this to return null and handle that in sim or page 
-    return "Segmentation Fault";
+    return null; 
   }
 
-  // Could be named better
-  translateVirtualToPhysicalAddress(virtualAddress: number): string {
+  segmentNameFromVirtualAddress(virtualAddress: number): string | null {
     const segmentFound = this.addressInSegment(virtualAddress);
 
-    if (segmentFound === "Segmentation Fault") {
-      return "Segmentation Fault"
+    if(segmentFound == null) {
+      return null
     } else {
-      return segmentFound.type.name
+      return segmentFound.type.name;
     }
   }
 }

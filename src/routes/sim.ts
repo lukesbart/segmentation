@@ -84,7 +84,7 @@ class Simulator {
     if (this.pas.validSegmentCreationOrChange(segment, newBase, newSize, segment.growDirection) && vas.validSegmentCreationOrChange(segment, newSize) && ((newBase + newSize*segment.growDirection)) < this.pas.paSize) {
       // Don't need a function in pas to change segment because current information is valid, changes automatically
       
-      let segmentIndex = vas.segmentList.indexOf(segment);
+      const segmentIndex = vas.segmentList.indexOf(segment);
 
       // By reassigning here, it is reassigned in all locations of the segment, remove one of the reassignings either here or in skeleton
       // Consider cloning segment and passing or only editing it here
@@ -109,7 +109,7 @@ class Simulator {
       }
     }
     
-    let segmentIndex = vas.segmentList.indexOf(segment);
+    const segmentIndex = vas.segmentList.indexOf(segment);
 
     segment.growDirection = newGrowDirection;
 
@@ -146,12 +146,23 @@ class Simulator {
     }
   }
 
-  translateVirtualToPhysicalAddress(vasIndex: number, virtualAddress: number) {
+  segmentNameFromVirtualAddress(vasIndex: number, virtualAddress: number) {
     if (virtualAddress < 0) {
       return "N/A"
     }
+    return this.pas.addressSpaceList[vasIndex].segmentNameFromVirtualAddress(virtualAddress)
+  }
 
-    return this.pas.addressSpaceList[vasIndex].translateVirtualToPhysicalAddress(virtualAddress);
+  translateVirtualAddressToPhysicalAddress(vasIndex: number, virtualAddress: number): number | null {
+    const segment = this.addressInSegment(vasIndex, virtualAddress);
+
+    if (segment === null) {
+      return null;
+    }
+
+    const translation = (segment.base - segment.vaBase) + virtualAddress;
+
+    return translation;
   }
 
   addressInSegment(vasIndex: number, virtualAddress: number) {
@@ -163,11 +174,13 @@ class Simulator {
       return [null, null];
     }
 
-    let code = segment.type.number.toString(2).padStart(2, '0');
-    let offset = Math.abs(address - segment.vaBase).toString(2).padStart(this.pas.vaLength -  2, '0')
+    const code = segment.type.number.toString(2).padStart(2, '0');
+    const offset = Math.abs(address - segment.vaBase).toString(2).padStart(this.pas.vaLength -  2, '0')
 
     return [code, offset];
   }
+
+
 
   toJSON() {
     return JSON.stringify(this.pas)
@@ -193,7 +206,7 @@ class Simulator {
 
       parseObj["addressSpaceList"][i]["segmentList"].forEach(segment => {
         // Bug from improper growDirection and segmentType?
-        let newSegmentType = segmentType[segment["type"].name.toLowerCase()];
+        const newSegmentType = segmentType[segment["type"].name.toLowerCase()];
        
 
         let segmentGrowDirection: number;
@@ -212,7 +225,7 @@ class Simulator {
   }
 
   buildDefault() {
-    let size = 256;
+    const size = 256;
     let base = 0;
 
     this.createAddressSpace();
@@ -238,11 +251,11 @@ class Simulator {
 
   // Instead of having the client create all the options for the address space, create a default address space and have them edit it
   createNewDefaultAddressSpace() {
-    let size = 256;
+    const size = 256;
     let base = 0;
 
     if (this.pas.segmentList.length > 0) {
-      let lastSegment = this.pas.segmentList[this.pas.segmentList.length - 1]
+      const lastSegment = this.pas.segmentList[this.pas.segmentList.length - 1]
 
       if (lastSegment.growDirection === growDirection.Positive) {
         base = lastSegment.bounds + 1;
@@ -253,7 +266,7 @@ class Simulator {
 
     this.createAddressSpace();
 
-    let as = this.pas.addressSpaceList[this.pas.addressSpaceList.length - 1]
+    const as = this.pas.addressSpaceList[this.pas.addressSpaceList.length - 1]
 
     this.createNewSegment(segmentType.code, base, size, growDirection.Positive, as)
     base += size;
@@ -272,7 +285,7 @@ class Simulator {
 
     this.createAddressSpace();
 
-    let as = this.pas.addressSpaceList[this.pas.addressSpaceList.length - 1]
+    const as = this.pas.addressSpaceList[this.pas.addressSpaceList.length - 1]
 
     this.createNewSegment(segmentType.code, -1, 0, growDirection.Positive, as);
     this.createNewSegment(segmentType.heap, -1, 0, growDirection.Positive, as);
