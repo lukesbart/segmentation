@@ -221,7 +221,7 @@ class VirtualAddressSpace {
 
   }
 
-  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, segmentIndex: number, growDirection: number) {
+  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, segmentIndex: number) {
     this.placeSegment(segment);
     this.segmentList[segmentIndex] = segment;
   }
