@@ -50,27 +50,30 @@ class PhysicalAddressSpace {
 
       /* Really need to thoroughly test this function, one of the most complex parts of program logic
          A positive growth segment cannot overlap base or bounds with another positive growth segment
-         A negative growth segment cannot overlap base or bounds with another negative growth segment
+         A negative growth segment cannot overlap two bases or two bounds with another negative growth segment
          A positive growth segment can share a base with a negative growth segment and vice versa
+         Segments canot overlap each other other than exceptions with base bounds and grow direction
       */
 
-      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
-        return false;
-      } else if (segmentGrowDirection === growDirection.Positive && ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) || (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) || (inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds)))) {
-        return false;
+      if (segmentGrowDirection === growDirection.Negative) {
+        if (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
+          return false;
+        } else if (inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
+          return false;
+        } else if ((inRange(newBase + newSize*segmentGrowDirection + 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
+          return false;
+        } else if ((inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
+          return false;
+        }
+      } else if (segmentGrowDirection === growDirection.Positive) {
+        if ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive)) {
+          return false;
+        } else if (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) {
+          return false;
+        } else if (inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds)) {
+          return false;
+        }
       }
-
-      // if (segmentGrowDirection === growDirection.Negative && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
-      //   return false;
-      // } else if (segmentGrowDirection === growDirection.Positive && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds))) {
-      //   return false;
-      // }
-
-      // if (segmentGrowDirection === growDirection.Negative && (inRange(newBase + newSize * segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
-      //   return false;
-      // } else if(segmentGrowDirection == growDirection.Positive && (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds))) {
-      //   return false;
-      // }
     }
   
     return true;
@@ -285,4 +288,4 @@ class Segment {
   }
 }
 
-export default {PhysicalAddressSpace, VirtualAddressSpace, Segment}
+export {PhysicalAddressSpace, VirtualAddressSpace, Segment}
