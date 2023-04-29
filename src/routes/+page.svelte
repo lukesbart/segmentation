@@ -40,7 +40,7 @@ let currentAddressSpace = 0;
 
 // Redefine function in sim to handle null
 // Can only change one of these at a time, expect other parameters to be null
-function editSegment(newSize: string | null, newBase: string | null, newGrowDirection: string | null, segmentIndex: number) {
+function editSegment(newSize: string | null, newBase: string | null, newGrowDirection: string | null, segmentIndex: number): void {
     let editedSegment = sim.pas.addressSpaceList[currentAddressSpace].segmentList[segmentIndex];
 
     if (newSize) {
@@ -77,13 +77,13 @@ function editSegment(newSize: string | null, newBase: string | null, newGrowDire
     sim.pas = sim.pas    
 }
 
-function deleteAddressSpace() {
+function deleteAddressSpace(): void {
     sim.deleteVirtualAddressSpace(sim.pas.addressSpaceList[currentAddressSpace]);
     sim.pas = sim.pas
     currentAddressSpace = 0;
 }
 
-function createNewAddressSpace() {
+function createNewAddressSpace(): void {
     sim.createNewBlankAddressSpace();
     
     sim.pas = sim.pas;
@@ -91,7 +91,7 @@ function createNewAddressSpace() {
     currentAddressSpace = sim.pas.addressSpaceList.length - 1;
 }
 
-function changePALength(newPALength: number) {
+function changePALength(newPALength: number): void {
     try {
         sim.editPaLength(newPALength)
         sim.pas = sim.pas
@@ -101,7 +101,7 @@ function changePALength(newPALength: number) {
     }
 }
 
-function changeVALength(newVaLength: number) {
+function changeVALength(newVaLength: number): void {
     try {
         sim.editVaLength(newVaLength)
         sim.pas = sim.pas
@@ -122,7 +122,7 @@ let addressInputValue:  string
 let addressTranslationBase = 10;
 
 // Logic that should be moved into sim
-function translateAddress(currentAddressSpace: number, addressTranslationVal: number) {
+function translateAddress(currentAddressSpace: number, addressTranslationVal: number): number | null {
     if(addressTranslationVal < 0) {
         return null;
     }
@@ -132,14 +132,14 @@ function translateAddress(currentAddressSpace: number, addressTranslationVal: nu
     return translatedAddress;
 }
 
-function calculateSegmentOffset() {
-    if (currentSegment.growDirection === growDirection.Negative) {
-        return Math.abs(((currentSegment.vaBase - 1) - addressTranslationValue!)).toString(2).padStart(sim.pas.vaLength - 2, '0');
+function calculateSegmentOffset(): string {
+    if (currentSegment!.growDirection === growDirection.Negative) {
+        return Math.abs(((currentSegment!.vaBase - 1) - addressTranslationValue!)).toString(2).padStart(sim.pas.vaLength - 2, '0');
     }
 
 
 
-    return Math.abs((addressTranslationValue! - currentSegment.base)).toString(2).padStart(sim.pas.vaLength - 2, '0');
+    return Math.abs((addressTranslationValue! - currentSegment!.vaBase)).toString(2).padStart(sim.pas.vaLength - 2, '0');
 }
 
 $: addressTranslationValue = addressInputValue !== undefined && addressInputValue !== null ? translateAddressToDecimal(addressInputValue) : null;
@@ -158,7 +158,7 @@ $: virtualAddressToPhysicalDecimal = addressTranslationValue !== undefined && ad
 
 let animation = "";
 
-function animateDirection(direction: string) {
+function animateDirection(direction: string): void {
     let animateStyle = "slide"
     let duration = "animate__faster"
 
@@ -175,7 +175,7 @@ function animateDirection(direction: string) {
 
 let buildName = "";
 let builds = [];
-function saveBuild() {
+function saveBuild(): void {
     builds = JSON.parse(localStorage.getItem('builds')) ?? builds;
 
     builds.push({name: buildName, build: sim.toJSON()});
@@ -187,7 +187,7 @@ function saveBuild() {
 }
 
 // When changing builds set all tracking variables to 0
-function buildFromJson(jsonBuild: string) {
+function buildFromJson(jsonBuild: string): void {
     try {
         const newBuild = sim.createBuild(jsonBuild);
         currentAddressSpace = 0;
@@ -199,13 +199,13 @@ function buildFromJson(jsonBuild: string) {
 
 let jsonOutput = ""
 
-function outputBuild() {
+function outputBuild(): void {
     // console.log(sim.toJSON())
     jsonOutput = sim.toJSON()
 }
 
 let storedBuilds = [];
-function getLocalStorageItems() {
+function getLocalStorageItems(): void {
     try {
         let getBuilds = JSON.parse(localStorage.getItem('builds'))
         getBuilds.forEach(build => {
@@ -244,7 +244,11 @@ function setBuildFromMemory(buildName: string): void {
     buildFromJson(storedBuilds[buildIndx]["build"])
 }
 
-function deleteBuild(buildName: string) {
+function deleteBuild(buildName: string): void {
+    if (!confirm(`Are you sure you want to delete ${buildName}?`)) {
+        return;
+    }
+
     for (let i = 0; i < storedBuilds.length; i++) {
         if (storedBuilds[i].name === buildName) {
             storedBuilds.splice(i, 1)

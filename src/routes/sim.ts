@@ -15,7 +15,7 @@ class Simulator {
     this.pas = new PhysicalAddressSpace(paLength, vaLength)
   }
 
-  editVaLength(newVaLength: number) {
+  editVaLength(newVaLength: number): void {
     if (newVaLength > this.pas.paLength) {
       throw new Error("VALength must be less than PALength")
     }
@@ -34,7 +34,7 @@ class Simulator {
     this.pas.editVaLength(newVaLength);
   }
 
-  editPaLength(newPaLength: number) {
+  editPaLength(newPaLength: number): void {
     if (newPaLength < this.pas.vaLength) {
       throw new Error("PA Length Cannot Be Less than VA Length")
     }
@@ -49,7 +49,7 @@ class Simulator {
   }
 
   // Segments should be created when a new address space is created with a default size, the user can only edit segments or delete the virtual address space containing them
-  deleteVirtualAddressSpace(vas: InstanceType<typeof VirtualAddressSpace>) {
+  deleteVirtualAddressSpace(vas: InstanceType<typeof VirtualAddressSpace>): void {
     // Remove all the segments in the virtual address space from the physical address space
     for (let i = 0; i < vas.segmentList.length; i++) {
       this.pas.segmentList.splice(this.pas.segmentList.indexOf(vas.segmentList[i]), 1);
@@ -60,7 +60,7 @@ class Simulator {
 
   // Need a way to determine which vas a segment is in
   // Since the simulator will know what virtual address space is in, might not need to find it, could be useful to confirm that segment exists in PAS
-  editSegment(segment: InstanceType<typeof Segment>, newBase: number, newSize: number) {
+  editSegment(segment: InstanceType<typeof Segment>, newBase: number, newSize: number): void {
     if (newBase < 0) {
       throw new Error("Base cannot be negative")
     }
@@ -99,7 +99,7 @@ class Simulator {
     }
   }
 
-  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, newGrowDirection: number) {
+  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, newGrowDirection: number): void {
     // Have to find vas because vaBase and vaBounds are based partially on growDirection
     let vas;
     for (let i = 0; i < this.pas.addressSpaceList.length; i++) {
@@ -131,13 +131,13 @@ class Simulator {
     segment.bounds = newBounds;
   }
 
-  createAddressSpace() {
+  createAddressSpace(): void {
     const newVirtualAddressSpace = new VirtualAddressSpace();
     
     this.pas.addNewVAS(newVirtualAddressSpace);
   }
 
-  createNewSegment(type, base: number, size: number, growDirection: number, vas) {
+  createNewSegment(type, base: number, size: number, growDirection: number, vas): void {
     if ((this.pas.validSegmentCreationOrChange(-1, base, size*growDirection) && vas.validSegmentCreationOrChange(-1, size)) || (base === -1 && size === 0)) {
       const newSegment = new Segment(type, base, size, growDirection);
 
@@ -146,7 +146,7 @@ class Simulator {
     }
   }
 
-  segmentNameFromVirtualAddress(vasIndex: number, virtualAddress: number) {
+  segmentNameFromVirtualAddress(vasIndex: number, virtualAddress: number): string {
     if (virtualAddress < 0) {
       return "N/A"
     }
@@ -165,7 +165,7 @@ class Simulator {
     return translation;
   }
 
-  addressInSegment(vasIndex: number, virtualAddress: number) {
+  addressInSegment(vasIndex: number, virtualAddress: number): InstanceType<typeof Segment> {
     return this.pas.addressSpaceList[vasIndex].addressInSegment(virtualAddress);
   }
 
@@ -182,13 +182,13 @@ class Simulator {
 
 
 
-  toJSON() {
+  toJSON(): string {
     return JSON.stringify(this.pas)
   }
 
   // Should the client take this and set their PAS equal to newSim.pas or the simulator does it automatically?
   // These functions should be moved into their own class?
-  createBuild(jsonInput: string) {
+  createBuild(jsonInput: string): InstanceType<typeof PhysicalAddressSpace> {
     let parseObj;
 
     try {
@@ -224,7 +224,7 @@ class Simulator {
     return newSim.pas;
   }
 
-  buildDefault() {
+  buildDefault(): void {
     const size = 256;
     let base = 0;
 
@@ -250,7 +250,8 @@ class Simulator {
   }
 
   // Instead of having the client create all the options for the address space, create a default address space and have them edit it
-  createNewDefaultAddressSpace() {
+  // Unused method, replacex with createNewBlankAddressSpace
+  createNewDefaultAddressSpace(): void {
     const size = 256;
     let base = 0;
 
