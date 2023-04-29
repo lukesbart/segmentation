@@ -24,6 +24,7 @@ class PhysicalAddressSpace {
     this.segmentList = [];
 
     // Change this to a just be reliant on the getPercentFull function
+    // Currently unused, maxAddressSpaces is determined by percent of physical address space used
     this.maxAddressSpaces = (this.paLength - this.vaLength) === 0 ? 1 : (this.paLength - this.vaLength) * 2; 
 
     this.addressSpaceList = [];
@@ -46,9 +47,16 @@ class PhysicalAddressSpace {
 
       // Positive and negative grow direction segments share same base if they are adjacent
       // Segments can't be created in overlapping space
-      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection + 2, this.segmentList[i].base, this.segmentList[i].bounds))) {
+
+      /* Really need to thoroughly test this function, one of the most complex parts of program logic
+         A positive growth segment cannot overlap base or bounds with another positive growth segment
+         A negative growth segment cannot overlap base or bounds with another negative growth segment
+         A positive growth segment can share a base with a negative growth segment and vice versa
+      */
+
+      if (segmentGrowDirection === growDirection.Negative && (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
         return false;
-      } else if (segmentGrowDirection === growDirection.Positive && ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) || (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) || (inRange(newBase + newSize, this.segmentList[i].base, this.segmentList[i].bounds)))) {
+      } else if (segmentGrowDirection === growDirection.Positive && ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) || (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) || (inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds)))) {
         return false;
       }
 
@@ -68,7 +76,7 @@ class PhysicalAddressSpace {
     return true;
   }
 
-  addNewVAS(vas: InstanceType<typeof VirtualAddressSpace>) {
+  addNewVAS(vas: InstanceType<typeof VirtualAddressSpace>): void {
     // if (this.addressSpaceList.length < this.maxAddressSpaces) {
     if(this.getPercentFull() < 1) {
       vas.vaLength = this.vaLength;
@@ -80,7 +88,7 @@ class PhysicalAddressSpace {
     }
   }
 
-  editVaLength(newVaLength: number) {
+  editVaLength(newVaLength: number): void {
     const vaSize = 2 ** newVaLength;
 
     for (let i = 0; i < this.addressSpaceList.length; i++) {
@@ -98,14 +106,14 @@ class PhysicalAddressSpace {
     this.maxAddressSpaces = (this.paLength - this.vaLength) === 0 ? 1 : (this.paLength - this.vaLength) * 2;
   }
 
-  editPaLength(newPaLength: number) {  
+  editPaLength(newPaLength: number): void {  
     this.paLength = newPaLength;
     this.paSize = 2 ** newPaLength;
 
     this.maxAddressSpaces = (this.paLength - this.vaLength) === 0 ? 1 : (this.paLength - this.vaLength) * 2; 
   }
 
-  getPercentFull() {
+  getPercentFull(): number {
     let segmentSizeSum = 0;
 
     for (let i = 0; i < this.segmentList.length; i++) {
@@ -133,7 +141,7 @@ class VirtualAddressSpace {
   }
  
   // When creating a new segment, the new segment's VABase won't be known because that would be given to it
-  validSegmentCreationOrChange(segment: InstanceType<typeof Segment>, newSize: number) {
+  validSegmentCreationOrChange(segment: InstanceType<typeof Segment>, newSize: number): boolean {
     if (newSize > this.size / 4) {
       return false;
     }
@@ -153,7 +161,7 @@ class VirtualAddressSpace {
   }
 
   // Place segment works with growDirection incorrectly
-  placeSegment(segment: InstanceType<typeof Segment>) {
+  placeSegment(segment: InstanceType<typeof Segment>): void {
     if (segment.base < 0) {
       segment.vaBase = segment.vaBounds = -1;
       return;
@@ -203,12 +211,12 @@ class VirtualAddressSpace {
 
   }
 
-  addNewSegment(segment: InstanceType<typeof Segment>) {
+  addNewSegment(segment: InstanceType<typeof Segment>): void {
     this.placeSegment(segment);
     this.segmentList.push(segment);
   }
 
-  editSegment(segment: InstanceType<typeof Segment>, segmentIndex: number) {
+  editSegment(segment: InstanceType<typeof Segment>, segmentIndex: number): void {
     // To reuse addNewSegment function create copy of segment and delete in array
     // let editedSegment = segment;
     //
@@ -221,12 +229,12 @@ class VirtualAddressSpace {
 
   }
 
-  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, segmentIndex: number) {
+  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, segmentIndex: number): void {
     this.placeSegment(segment);
     this.segmentList[segmentIndex] = segment;
   }
 
-  addressInSegment(virtualAddress: number) {
+  addressInSegment(virtualAddress: number): InstanceType<typeof Segment>  | null {
     for (let i = 0; i < this.segmentList.length; i++) {
       // With negative growth direction, the first valid address is segmentBase - 1, 
       if (validAccess(this.segmentList[i].vaBase, this.segmentList[i].vaBounds, virtualAddress, this.segmentList[i].growDirection)) {
