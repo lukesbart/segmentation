@@ -1,6 +1,8 @@
 import {describe, expect, it} from 'vitest';
 
-import { PhysicalAddressSpace, VirtualAddressSpace, Segment } from '../src/routes/skeleton';
+// import { PhysicalAddressSpace, VirtualAddressSpace, Segment } from '../src/routes/skeleton';
+import { PhysicalAddressSpace } from '../src/routes/physicalAddressSpace';
+import { Segment } from '../src/routes/segment';
 
 import segmentType from '../src/routes/constants/segmentType';
 import growDirection from '../src/routes/constants/growDirection';

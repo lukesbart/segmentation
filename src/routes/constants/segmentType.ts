@@ -1,4 +1,6 @@
-const segmentType = {
+import type { ISegmentType } from "../interfaces/ISegmentType";
+
+const segmentType: {[key: string]: ISegmentType} = {
   code: {
     name: 'Code',
     number: 0,
@@ -16,6 +18,5 @@ const segmentType = {
     number: 3
   }
 }
-
 
 export default segmentType

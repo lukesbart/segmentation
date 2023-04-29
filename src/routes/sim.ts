@@ -1,12 +1,22 @@
-import pkg from './skeleton'
-const { PhysicalAddressSpace, VirtualAddressSpace, Segment} = pkg; 
+// import { PhysicalAddressSpace, VirtualAddressSpace, Segment } from './skeleton';
+import type {IPhysicalAddressSpace} from './interfaces/IPhysicalAddressSpace'
+
+import { PhysicalAddressSpace } from './physicalAddressSpace';
+import { VirtualAddressSpace } from './virtualAddressSpace';
+import { Segment } from './segment';
 
 import growDirection from './constants/growDirection';
 import segmentType from './constants/segmentType';
 import { boundsCalc } from './constants/baseBoundsCalc';
+import type { ISegment } from './interfaces/ISegment';
+import type { IVirtualAddressSpace } from './interfaces/IVirtualAddressSpace';
+import type { ISegmentType } from './interfaces/ISegmentType';
+
+// Should only contain logic that cannot be contained in skeleton
+// Should still provide proxy between view and skeleton
 
 class Simulator {
-  pas: any;
+  pas: IPhysicalAddressSpace;
 
   static segmentType = segmentType;
   static growDirection = growDirection;
@@ -17,7 +27,11 @@ class Simulator {
 
   editVaLength(newVaLength: number): void {
     if (newVaLength > this.pas.paLength) {
-      throw new Error("VALength must be less than PALength")
+      throw new Error("vaLength must be less than PALength")
+    }
+
+    if(newVaLength <= 0) {
+      throw new Error("vaLength cannot be less than 1")
     }
 
     let maxSize = 0;
@@ -28,7 +42,7 @@ class Simulator {
     }
 
     if (2**newVaLength < maxSize * 4) {
-      throw new Error("VALength cannot be less than segment size")
+      throw new Error("vaLength cannot be less than segment size")
     }
 
     this.pas.editVaLength(newVaLength);
@@ -36,12 +50,12 @@ class Simulator {
 
   editPaLength(newPaLength: number): void {
     if (newPaLength < this.pas.vaLength) {
-      throw new Error("PA Length Cannot Be Less than VA Length")
+      throw new Error("paLength Cannot Be Less than vaLength")
     }
     
     for (let i = 0; i < this.pas.segmentList.length; i++) {
       if (this.pas.segmentList[i].bounds > 2**newPaLength) {
-        throw new Error("PALength cannot be less than max segment place")
+        throw new Error("paLength cannot be less than max segment place")
       }
     }
 
@@ -49,7 +63,7 @@ class Simulator {
   }
 
   // Segments should be created when a new address space is created with a default size, the user can only edit segments or delete the virtual address space containing them
-  deleteVirtualAddressSpace(vas: InstanceType<typeof VirtualAddressSpace>): void {
+  deleteVirtualAddressSpace(vas: IVirtualAddressSpace): void {
     // Remove all the segments in the virtual address space from the physical address space
     for (let i = 0; i < vas.segmentList.length; i++) {
       this.pas.segmentList.splice(this.pas.segmentList.indexOf(vas.segmentList[i]), 1);
@@ -60,7 +74,7 @@ class Simulator {
 
   // Need a way to determine which vas a segment is in
   // Since the simulator will know what virtual address space is in, might not need to find it, could be useful to confirm that segment exists in PAS
-  editSegment(segment: InstanceType<typeof Segment>, newBase: number, newSize: number): void {
+  editSegment(segment: ISegment, newBase: number, newSize: number): void {
     if (newBase < 0) {
       throw new Error("Base cannot be negative")
     }
@@ -69,8 +83,12 @@ class Simulator {
       throw new Error("Base cannot be higher than the size of the physical address space")
     }
 
+    if ((newBase + (newSize * segment.growDirection)) < 0) {
+      throw new Error("Segment cannot be placed in negative space")
+    }
+
     // Find vas to avoid nesting the vas in the segment
-    let vas;
+    let vas: IVirtualAddressSpace | undefined;
 
     // For loop should be based off of addressSpaceList length
     for (let i = 0; i < this.pas.addressSpaceList.length; i++) {
@@ -78,6 +96,10 @@ class Simulator {
         vas = this.pas.addressSpaceList[i];
         break;
       }
+    }
+
+    if (vas === undefined) {
+      throw new Error("could not find segment")
     }
 
     // Need to make sure that base is in bounds of PA
@@ -99,21 +121,25 @@ class Simulator {
     }
   }
 
-  editSegmentGrowDirection(segment: InstanceType<typeof Segment>, newGrowDirection: number): void {
+  editSegmentGrowDirection(segment: ISegment, newGrowDirection: number): void {
     // Have to find vas because vaBase and vaBounds are based partially on growDirection
-    let vas;
+    let vas: IVirtualAddressSpace | undefined;
     for (let i = 0; i < this.pas.addressSpaceList.length; i++) {
       if (this.pas.addressSpaceList[i].segmentList.indexOf(segment) !== -1) {
         vas = this.pas.addressSpaceList[i];
         break;
       }
     }
+
+    if (vas === undefined) {
+      throw new Error("Could not find virtual address space")
+    }
     
     const segmentIndex = vas.segmentList.indexOf(segment);
 
     segment.growDirection = newGrowDirection;
 
-    vas.editSegmentGrowDirection(segment, segmentIndex, newGrowDirection);
+    vas.editSegmentGrowDirection(segment, segmentIndex);
 
     // Need way to switch these while being able to reverse them an infinte amount of times
     let newBase, newBounds : number;
@@ -137,8 +163,8 @@ class Simulator {
     this.pas.addNewVAS(newVirtualAddressSpace);
   }
 
-  createNewSegment(type, base: number, size: number, growDirection: number, vas): void {
-    if ((this.pas.validSegmentCreationOrChange(-1, base, size*growDirection) && vas.validSegmentCreationOrChange(-1, size)) || (base === -1 && size === 0)) {
+  createNewSegment(type: ISegmentType, base: number, size: number, growDirection: number, vas: IVirtualAddressSpace): void {
+    if ((this.pas.validSegmentCreationOrChange(null, base, size, growDirection) && vas.validSegmentCreationOrChange(null, size)) || (base === -1 && size === 0)) {
       const newSegment = new Segment(type, base, size, growDirection);
 
       vas.addNewSegment(newSegment);
@@ -146,7 +172,7 @@ class Simulator {
     }
   }
 
-  segmentNameFromVirtualAddress(vasIndex: number, virtualAddress: number): string {
+  segmentNameFromVirtualAddress(vasIndex: number, virtualAddress: number): string | null {
     if (virtualAddress < 0) {
       return "N/A"
     }
@@ -165,11 +191,12 @@ class Simulator {
     return translation;
   }
 
-  addressInSegment(vasIndex: number, virtualAddress: number): InstanceType<typeof Segment> {
+  addressInSegment(vasIndex: number, virtualAddress: number): ISegment | null {
     return this.pas.addressSpaceList[vasIndex].addressInSegment(virtualAddress);
   }
 
-  explicitAddress(segment: InstanceType<typeof Segment>, address: number) {
+  // Unused function
+  explicitAddress(segment: ISegment, address: number) {
     if (address < 0) {
       return [null, null];
     }
@@ -180,15 +207,13 @@ class Simulator {
     return [code, offset];
   }
 
-
-
   toJSON(): string {
     return JSON.stringify(this.pas)
   }
 
   // Should the client take this and set their PAS equal to newSim.pas or the simulator does it automatically?
   // These functions should be moved into their own class?
-  createBuild(jsonInput: string): InstanceType<typeof PhysicalAddressSpace> {
+  createBuild(jsonInput: string): IPhysicalAddressSpace {
     let parseObj;
 
     try {
@@ -204,19 +229,23 @@ class Simulator {
     for (let i = 0; i < parseObj["addressSpaceList"].length; i++) {
       newSim.createAddressSpace();
 
-      parseObj["addressSpaceList"][i]["segmentList"].forEach(segment => {
+      parseObj["addressSpaceList"][i]["segmentList"].forEach((segment: ISegment) => {
         // Bug from improper growDirection and segmentType?
         const newSegmentType = segmentType[segment["type"].name.toLowerCase()];
        
 
-        let segmentGrowDirection: number;
+        let segmentGrowDirection: number | undefined;
         if (segment["growDirection"] === 1) {
           segmentGrowDirection = Simulator.growDirection.Positive;
         } else if (segment["growDirection"] === -1) {
           segmentGrowDirection = Simulator.growDirection.Negative;
         }
 
-        newSim.createNewSegment(newSegmentType, segment["base"], segment["size"], segmentGrowDirection!, newSim.pas.addressSpaceList[i])
+        if (segmentGrowDirection === undefined) {
+          throw new Error("All Segments Must have a grow Direction")
+        }
+
+        newSim.createNewSegment(newSegmentType, segment["base"], segment["size"], segmentGrowDirection, newSim.pas.addressSpaceList[i])
         
       })
     }
