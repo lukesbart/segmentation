@@ -14,5 +14,6 @@ export type IPhysicalAddressSpace = {
     editPaLength: (newPaLength: number) => void;
     editVaLength: (newVaLength: number) => void;
     validSegmentCreationOrChange: (segment: ISegment | null, newBase: number, newSize: number, segmentGrowDirection: number) => boolean;
-    addNewVAS: (vas: IVirtualAddressSpace) => void
+    addNewVAS: (vas: IVirtualAddressSpace) => void;
+    getPercentFull: () => number
 }
