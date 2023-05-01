@@ -2,6 +2,8 @@
 <title>Segmentation Simulator</title>
 
 <script lang="ts"> 
+import {base} from '$app/paths'
+
 import {Simulator} from './sim'
 import PhysicalAddressSpace from './components/PhysicalAddressSpace.svelte';
 import VirtualAddressSpace from './components/VirtualAddressSpace.svelte';
@@ -276,9 +278,13 @@ function deleteBuild(buildName: string): void {
 </script>
 
 <h1 class="text-center text-5xl">Segmentation Simulator</h1>
+<div class="text-center font-bold">
+    <a href="{base}/about_segmentation" class="text-blue-500">About Segmentation</a>
+    <a href="{base}/about_architecture" class="text-red-500">Architecture of Simulator</a>
+</div>
 
 <div class="flex w-full">
-    <div style="margin-right: 50%">
+    <div style="margin-right: 45%">
         <label for="translateVA">Address Translation:</label>
         <!-- {#if addressInputBase === 16}
             <input type="text" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
@@ -299,7 +305,6 @@ function deleteBuild(buildName: string): void {
             <option value="{16}">Hex</option>
             <option value="{2}">Bin</option>
         </select>
-        <br>
         <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
         <p>Physical: {virtualAddressToPhysical !== null ? virtualAddressToPhysical : 'N/A'}</p>
         <p>Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span><span>{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
@@ -323,7 +328,7 @@ function deleteBuild(buildName: string): void {
     <button on:click={() => {currentAddressSpace++; animateDirection("right")}} disabled={currentAddressSpace === sim.pas.addressSpaceList.length - 1 || pasEmpty} class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50">Next Address Space</button>
 </div> -->
 
-<div class="flex justify-center items-center mt-2">
+<div class="flex justify-center items-center mt-1">
     <button on:click={() => {currentAddressSpace--; animateDirection("left")}} disabled={currentAddressSpace === 0 || pasEmpty} class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10" title="Previous Address Space"><i class="bi bi-arrow-left-circle-fill"></i></button>
     <table class="text-center mx-2">
         <thead>

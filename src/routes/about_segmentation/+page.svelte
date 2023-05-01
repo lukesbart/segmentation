@@ -1,9 +1,13 @@
+<script lang="ts">
+    import {base} from '$app/paths';
+</script>
+
 <title>About Segmentation</title>
 
 <h1 class="text-center text-5xl mb-4">About Segmentation</h1>
 <div class="text-center font-bold mb-10">
-    <a href="/" class="text-blue-500">Simulator</a>
-    <a href="/about_architecture" class="text-red-500">Architecture of Simulator</a>
+    <a href="{base}/" class="text-blue-500">Simulator</a>
+    <a href="{base}/about_architecture" class="text-red-500">Architecture of Simulator</a>
 </div>
 
 <main>

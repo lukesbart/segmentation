@@ -1,14 +1,18 @@
+<script>
+    import {base} from '$app/paths'
+</script>
+
 <title>About Simulator Architecture</title>
 
-<h1 class="text-center text-5xl mb-2">About Segmentation</h1>
+<h1 class="text-center text-5xl mb-2">About Architecture of Simulator</h1>
 <div class="text-center font-bold mb-10">
-    <a href="/" class="text-blue-500">Simulator</a>
-    <a href="/about_segmentation" class="text-red-500">About Segmenation</a>
+    <a href="{base}/" class="text-blue-500">Simulator</a>
+    <a href="{base}/about_segmentation" class="text-red-500">About Segmenation</a>
 </div>
 
 <!-- <embed src="/static/Simulator Architecture.pdf" type="application/pdf"> -->
 <div class="flex justify-center mb-2">
-    <img src="/simarch.png" alt="" style="height: 450px; width: 3/4">
+    <img src="{base}/simarch.png" alt="" style="height: 450px; width: 3/4">
 </div>
     
 <main>
