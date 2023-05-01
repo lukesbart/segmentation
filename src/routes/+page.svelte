@@ -13,7 +13,7 @@ import 'notyf/notyf.min.css'
 import { onMount } from 'svelte';
 
 
-let notyf: object;
+let notyf: InstanceType<typeof Notyf>;
 onMount(() => {
     notyf = new Notyf({
         duration: 2000
@@ -136,9 +136,7 @@ function calculateSegmentOffset(): string {
     if (currentSegment!.growDirection === growDirection.Negative) {
         return Math.abs(((currentSegment!.vaBase - 1) - addressTranslationValue!)).toString(2).padStart(sim.pas.vaLength - 2, '0');
     }
-
-
-
+    
     return Math.abs((addressTranslationValue! - currentSegment!.vaBase)).toString(2).padStart(sim.pas.vaLength - 2, '0');
 }
 
@@ -174,9 +172,14 @@ function animateDirection(direction: string): void {
 }
 
 let buildName = "";
-let builds = [];
+let builds: Array<{[key: string]: string}> = [];
 function saveBuild(): void {
-    builds = JSON.parse(localStorage.getItem('builds')) ?? builds;
+    // Does not work, push to json.parse does not work as a function
+    let localStorageBuilds = JSON.parse(localStorage.getItem('builds') || '{}') ?? {};
+
+    Object.entries(localStorageBuilds).forEach((buildObj: any) => {
+        builds.push({name: buildObj[1].name, build: buildObj[1].build});
+    })
 
     builds.push({name: buildName, build: sim.toJSON()});
 
@@ -204,13 +207,22 @@ function outputBuild(): void {
     jsonOutput = sim.toJSON()
 }
 
-let storedBuilds = [];
+let storedBuilds: Array<{[key: string]: string}> = [];
 function getLocalStorageItems(): void {
     try {
-        let getBuilds = JSON.parse(localStorage.getItem('builds'))
-        getBuilds.forEach(build => {
-            // console.log(build.build)
-            storedBuilds.push(build)
+        let getBuilds = JSON.parse(localStorage.getItem('builds') || '{}')
+        // getBuilds.forEach((build: {[key: string]: string}) => {
+        //     // console.log(build.build)
+        //     // storedBuilds.push(build)
+        //     // console.log(build);
+        //     storedBuilds.push({name: build.name, build: build.build})
+        // })
+
+        Object.entries(getBuilds).forEach((buildObj: any) => {
+            // const [key, value] = buildObj;
+            // console.log(`${key} ${value}`)
+            // console.log(buildObj[1].name)
+            storedBuilds.push({name: buildObj[1].name, build: buildObj[1].build})
         })
     } catch(e: any) {
         // displayError(e.message)
@@ -228,7 +240,7 @@ function setBuildFromMemory(buildName: string): void {
         return;
    }
 
-    let buildIndx: number;
+    let buildIndx: number | undefined;
 
     for (let i = 0; i < storedBuilds.length; i++) {
         if (storedBuilds[i].name === buildName) {
@@ -304,7 +316,7 @@ function deleteBuild(buildName: string): void {
     </div>
 </div>
 
-<VirtualAddressSpace currentSegment={currentSegment} virtualAddressToPhysical={virtualAddressToPhysical} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} currentAddressSpace={currentAddressSpace} animation={animation} addressTranslationResult={addressTranslationResult} vasIndicatorText={vasIndicatorText}/>
+<VirtualAddressSpace currentSegment={currentSegment} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} currentAddressSpace={currentAddressSpace} animation={animation} vasIndicatorText={vasIndicatorText}/>
 
 <!-- <div style="text-align: center;">
     <button on:click={() => {currentAddressSpace--; animateDirection("left")}} disabled={currentAddressSpace === 0 || pasEmpty} class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50">Previous Address Space</button>
@@ -334,7 +346,7 @@ function deleteBuild(buildName: string): void {
                             <td><input type="number" value={segment.base} on:change={(e) => editSegment(null, e.target.value, null, sim.pas.addressSpaceList[currentAddressSpace].segmentList.indexOf(segment))} class="w-24 bg-gray-900"></td>
                             <td><input type="number" value={segment.size} on:change={(e) => editSegment(e.target.value, null, null, sim.pas.addressSpaceList[currentAddressSpace].segmentList.indexOf(segment))} class="w-24 bg-gray-900"></td>
                         {/key}
-                        <td>{segment.bounds > 0 && segment.size > 0 ?  segment.bounds : 'N/A'}</td>
+                        <td>{segment.bounds >= 0 && segment.size > 0 ?  segment.bounds : 'N/A'}</td>
                         <td>
                             <select name="" id="" value={segment.growDirection} on:change={(e) => editSegment(null, null, e.target.value, sim.pas.addressSpaceList[currentAddressSpace].segmentList.indexOf(segment))}>
                                 <option value={Simulator.growDirection.Positive}>Positive</option>
