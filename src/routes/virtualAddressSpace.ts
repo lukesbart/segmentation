@@ -41,7 +41,6 @@ class VirtualAddressSpace implements IVirtualAddressSpace {
       return true;
     }
   
-    // Place segment works with growDirection incorrectly
     placeSegment(segment: ISegment): void {
       if (segment.base < 0) {
         segment.vaBase = segment.vaBounds = -1;
@@ -74,12 +73,11 @@ class VirtualAddressSpace implements IVirtualAddressSpace {
       
       else if (segment.type === segmentType.extra) {
         if (segment.growDirection === growDirection.Negative) {
-          segment.vaBase = this.size - 1;
+          segment.vaBase = this.size;
         } else {
           segment.vaBase = this.size * (3/4);
         }
       }
-      // Theoretically can never reach this section
       else {
         throw new Error("Segment must have a type")
       }
