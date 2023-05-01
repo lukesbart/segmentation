@@ -1,4 +1,3 @@
-// import { PhysicalAddressSpace, VirtualAddressSpace, Segment } from './skeleton';
 import type {IPhysicalAddressSpace} from './interfaces/IPhysicalAddressSpace'
 
 import { PhysicalAddressSpace } from './physicalAddressSpace';
@@ -99,7 +98,7 @@ class Simulator {
     }
 
     if (vas === undefined) {
-      throw new Error("could not find segment")
+      throw new Error("Could not find segment")
     }
 
     // Need to make sure that base is in bounds of PA
@@ -117,7 +116,11 @@ class Simulator {
 
       vas.editSegment(segment, segmentIndex);
     } else {
-      throw new Error("Invalid segment base or size")
+      if ((newBase + newSize*segment.growDirection) > this.pas.paSize) {
+        throw new Error("Segment cannot go outside of physical address space");
+      }
+
+      throw new Error("Invalid segment base or size");
     }
   }
 
