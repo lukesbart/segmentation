@@ -3,6 +3,7 @@
     import Segment from "../segment.svelte";
     import type { Simulator } from "../sim";
     import { setIndicatorTextPosition } from "../uiUtils/setIndicatorTextPosition";
+    import type { ISegment } from "../interfaces/ISegment";
 
     export let addressTranslationValue: number | null;
     export let sim: InstanceType<typeof Simulator>
@@ -11,7 +12,7 @@
     export let animation: string;
     export let vasIndicatorText: string | null;
 
-    export let currentSegment: InstanceType<typeof Segment>;
+    export let currentSegment: ISegment | null;
 
     $: indicatorTextPosition = addressTranslationValue !== null && addressTranslationValue !== undefined ? setIndicatorTextPosition(addressTranslationValue, sim.pas.vaSize) : 'left: 0%;';
 </script>

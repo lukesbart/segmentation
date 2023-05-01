@@ -5,16 +5,16 @@
     import { addressRange } from "../uiUtils/addressRange";
     import { setIndicatorTextPosition } from "../uiUtils/setIndicatorTextPosition";
 
-    export let virtualAddressToPhysical: number | string;
-    export let virtualAddressToPhysicalDecimal: number;
+    export let virtualAddressToPhysical: number | null;
+    export let virtualAddressToPhysicalDecimal: number | null;
     export let addressTranslationValue: number | null;
     export let sim: InstanceType<typeof Simulator>
     export let pasEmpty: boolean;
     export let currentAddressSpace: number;
     export let percentFull: number;
 
-    export let pasIndicatorText: string;    
-    $: indicatorTextPosition = addressTranslationValue !== null && addressTranslationValue !== undefined ? setIndicatorTextPosition(virtualAddressToPhysicalDecimal, sim.pas.paSize) : 'left: 0%;';
+    export let pasIndicatorText: string | null;    
+    $: indicatorTextPosition = addressTranslationValue !== null && addressTranslationValue !== undefined && virtualAddressToPhysicalDecimal !== null ? setIndicatorTextPosition(virtualAddressToPhysicalDecimal, sim.pas.paSize) : 'left: 0%;';
 </script>
 
 <p class="text-center text-xl">Physical Address Space</p>
@@ -29,7 +29,7 @@
     <div class="absolute left-3/4 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute left-875 border-l h-20 border-solid border-gray-400 z-0"></div>
     <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
-    {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue >= 0}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;"></div>{/if}
+    {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && addressTranslationValue && addressTranslationValue >= 0 && virtualAddressToPhysicalDecimal !== null}<div class="absolute border-l-4 h-20 border-solid border-teal-300 z-20" style="left: {(virtualAddressToPhysicalDecimal/sim.pas.paSize)*100}%;"></div>{/if}
     
 
     <div class="flex">
@@ -55,6 +55,6 @@
                 <span style="right: 0; position: absolute; padding: 0;">{num}</span>
             {/if}
         {/each}
-        {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && virtualAddressToPhysical !== "Segmentation Fault" && addressTranslationValue >= 0}<p class="text-teal-300 inline-block absolute z-10 backdrop-blur-3xl" style="{indicatorTextPosition}">{pasIndicatorText}</p>{/if}
+        {#if virtualAddressToPhysical !== undefined && virtualAddressToPhysical !== null && virtualAddressToPhysical !== null && addressTranslationValue !== null && addressTranslationValue >= 0}<p class="text-teal-300 inline-block absolute z-10 backdrop-blur-3xl" style="{indicatorTextPosition}">{pasIndicatorText}</p>{/if}
     </div>  
 </div>
