@@ -54,23 +54,48 @@ class PhysicalAddressSpace implements IPhysicalAddressSpace {
            A positive growth segment can share a base with a negative growth segment and vice versa
            Segments canot overlap each other other than exceptions with base bounds and grow direction
         */
+
+        const throwOverlapError = (editSegment: string, overlappedSegment: string) => {
+          throw new Error(`Segment ${editSegment} overlaps with segment ${overlappedSegment}`);
+        };
   
         if (segmentGrowDirection === growDirection.Negative) {
           if (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           } else if (inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name); 
+            }
             return false;
           } else if ((inRange(newBase + newSize*segmentGrowDirection + 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           } else if ((inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           }
         } else if (segmentGrowDirection === growDirection.Positive) {
           if ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive)) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           } else if (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           } else if (inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds)) {
+            if (segment !== null) {
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+            }
             return false;
           }
         }
