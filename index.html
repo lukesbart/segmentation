@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="./favicon.png" />
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="content-security-policy" content="">
+		<link href="./_app/immutable/assets/_layout.7d343d70.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page.b3b432fa.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.3a386919.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.432d362e.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.c702e1bb.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.98ce242e.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.66aa749c.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.f9cd0fb8.js">
+</head>
+
+<body data-sveltekit-preload-data="hover" class="w-screen bg-gh-dark text-blue-100">
+	<div style="display: contents">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<title>Segmentation Simulator</title>
+
+
+
+<h1 class="text-center text-5xl">Segmentation Simulator</h1>
+
+<div class="flex w-full"><div style="margin-right: 50%"><label for="translateVA">Address Translation:</label>
+        
+        <input type="text" id="translateVA"  class="bg-gray-900 svelte-1syeghw">
+        <br>
+        
+        <label for="" class="ml-5">To:</label>
+        <select name="" id="" class="mt-2 rounded-md svelte-1syeghw"><option value="10" selected>Dec</option><option value="16">Hex</option><option value="2">Bin</option></select>
+        <br>
+        <p>Segment: N/A</p>   
+        <p>Physical: N/A</p>
+        <p>Explicit: <span class="text-pink-500"></span><span>N/A</span></p>
+        <br></div>
+    <div class="relative right-0 text-right inline-block"><label for="">PA Length</label>
+            <input type="number" value="12" class="bg-gray-900 svelte-1syeghw">
+            <br>
+            <label for="">VA Length</label>
+            <input type="number" value="10" class="bg-gray-900 svelte-1syeghw"></div></div>
+
+<p class="text-xl text-center mb-2">Virtual Address Space 0</p>
+<div class="w-screen h-28 bg-gray-800 select-none text-white">
+    <div class="absolute border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-1/4 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-1/2 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-3/4 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
+    
+    
+    <div class="flex "><div class="h-20"></div>
+
+        <div class="inline-block z-10 absolute cursor-pointer" style="left: 0%; width: 25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-2 border-sky-50/80 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-thin">C</span></div></div><div class="inline-block z-10 absolute cursor-pointer" style="left: 25%; width: 25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-2 border-sky-50/80 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-thin">H</span></div></div><div class="inline-block z-10 absolute cursor-pointer" style="right: 25%; width: 25%;"><div class="text-blue-50 bg-red-600 h-20 rounded-md text-center border-solid border-2 border-sky-50/80 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-thin">S</span></div></div><div class="inline-block z-10 absolute cursor-pointer" style="left: 75%; width: 25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-2 border-sky-50/80 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-thin">E</span></div></div></div>
+
+    <div class="text-blue-50 w-full mt-2"><span style="left: 0%;" class="absolute m-0 p-0">0</span><span style="left: 25%;" class="absolute m-0 p-0">256</span><span style="left: 50%;" class="absolute m-0 p-0">512</span><span style="left: 75%;" class="absolute m-0 p-0">768</span><span class="right-0 absolute p-0">1024</span>
+        
+        </div></div>
+
+
+
+<div class="flex justify-center items-center mt-2"><button disabled class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-1syeghw" title="Previous Address Space"><i class="bi bi-arrow-left-circle-fill"></i></button>
+    <table class="text-center mx-2"><thead><tr class="bg-gray-900"><th>Name</th>
+                <th>Number</th>
+                <th>Base</th>
+                <th>Size</th>
+                <th>Bounds</th>
+                <th>Direction</th></tr></thead>
+        <tbody class="bg-gray-800"><tr><td>Code</td>
+                        <td class="text-center">00</td>
+                        <td><input type="number" value="0" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td>255</td>
+                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                    </tr><tr><td>Heap</td>
+                        <td class="text-center">01</td>
+                        <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td>511</td>
+                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                    </tr><tr><td>Stack</td>
+                        <td class="text-center">10</td>
+                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td>512</td>
+                        <td><select name="" id="" value="-1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                    </tr><tr><td>Extra</td>
+                        <td class="text-center">11</td>
+                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td>1023</td>
+                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                    </tr></tbody></table>
+    <button disabled class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-1syeghw" title="Next Address Space"><i class="bi bi-arrow-right-circle-fill"></i></button></div>
+
+<div class="text-center mt-4 mb-3"><button  class="enabled:bg-red-600 disabled:bg-gray-600 rounded-md svelte-1syeghw">Delete Address Space</button>
+    <button  class="enabled:bg-blue-600 disabled:bg-gray-600 rounded-md svelte-1syeghw">New Address Space</button></div>
+
+<p class="text-center text-xl">Physical Address Space</p>
+<p class="text-center">25% Full</p>
+<div class="bg-gray-800 h-28 text-blue-100 select-none px-1 w-full"><div class="absolute border-l h-20 border-solid border-gray-400 w-1 z-0"></div>
+    <div class="absolute left-125 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-1/4 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-375 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-1/2 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-625 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-3/4 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute left-875 border-l h-20 border-solid border-gray-400 z-0"></div>
+    <div class="absolute right-2 border-l h-20 border-solid border-gray-400 z-0"></div>
+    
+    
+
+    <div class="flex"><div class="h-20"></div>
+        <div><div class="inline-block z-10 absolute cursor-pointer" style="left: 0%; width: 6.25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-4 border-sky-300 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-normal">0C</span></div></div>
+                        </div><div><div class="inline-block z-10 absolute cursor-pointer" style="left: 6.25%; width: 6.25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-4 border-sky-300 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-normal">0H</span></div></div>
+                        </div><div><div class="inline-block z-10 absolute cursor-pointer" style="right: 81.25%; width: 6.25%;"><div class="text-blue-50 bg-red-600 h-20 rounded-md text-center border-solid border-4 border-sky-300 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-normal">0S</span></div></div>
+                        </div><div><div class="inline-block z-10 absolute cursor-pointer" style="left: 18.75%; width: 6.25%;"><div class="text-blue-50 bg-blue-600 h-20 rounded-md text-center border-solid border-4 border-sky-300 flex items-center justify-center hover:ring-2 hover:ring-white hover:ring-offset-0"><span class="inline=block text-2xl font-normal">0E</span></div></div>
+                        </div></div>
+
+    <div class="mt-2"><span style="left: 0%; position: absolute; margin: 0; padding: 0;">0</span><span style="left: 12.5%; position: absolute; margin: 0; padding: 0;">512</span><span style="left: 25%; position: absolute; margin: 0; padding: 0;">1024</span><span style="left: 37.5%; position: absolute; margin: 0; padding: 0;">1536</span><span style="left: 50%; position: absolute; margin: 0; padding: 0;">2048</span><span style="left: 62.5%; position: absolute; margin: 0; padding: 0;">2560</span><span style="left: 75%; position: absolute; margin: 0; padding: 0;">3072</span><span style="left: 87.5%; position: absolute; margin: 0; padding: 0;">3584</span><span style="right: 0; position: absolute; padding: 0;">4096</span>
+        </div></div>
+
+<br><br>
+<div class="text-center"><h2 class="text-3xl text-center">Simulation Presets</h2>
+    <br>
+    
+    <br><br>
+    <input type="text" placeholder="Build name" class="bg-gray-800 svelte-1syeghw" value="">
+    <button class="bg-blue-900 p-2 rounded-md svelte-1syeghw">Save Build</button>
+    <button class="bg-cyan-900 p-2 rounded-md svelte-1syeghw">Output Build</button>
+
+    <br><br>
+
+    <form><textarea rows="20" cols="80" id="jsonInput" name="jsonInput" class="border-2 border-black bg-gray-600"></textarea>
+        <br>
+        <button type="submit" class="bg-cyan-900 p-2 w-30 h-10 rounded-md svelte-1syeghw">Submit JSON</button></form>
+</div>
+
+
+			
+			<script>
+				{
+					__sveltekit_dhbiex = {
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					const data = [null,null];
+
+					Promise.all([
+						import("./_app/immutable/entry/start.3a386919.js"),
+						import("./_app/immutable/entry/app.98ce242e.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 2],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+</body>
+
+</html>
