@@ -159,3 +159,47 @@ describe("PAS validSegmentCreationOrChange with all negative growth segments", (
         expect(pas.validSegmentCreationOrChange(pasCode, 256, 256, growDirection.Negative)).toBeTruthy()
     })
 })
+
+
+describe("It tries to create adjacent positive growth segments", () => {
+    const pas = new PhysicalAddressSpace(12, 10);
+    
+    const pasCode = new Segment(segmentType.code, 0, 256, growDirection.Positive);
+    const pasHeap = new Segment(segmentType.heap, 256, 256, growDirection.Positive);
+    const pasExtra = new Segment(segmentType.extra, 512, 0, growDirection.Positive);
+
+    addSegmentToPAS(pas, pasCode);
+
+    it("Tries to add Heap adjacent to Code", () => {
+        expect(pas.validSegmentCreationOrChange(pasHeap, 257, 256, growDirection.Positive)).toBeTruthy();
+    })
+
+    addSegmentToPAS(pas, pasHeap)
+
+    it("Tries to add an empty segment next to a positive growth segment", () => {
+        expect(pas.validSegmentCreationOrChange(pasHeap, 512, 0, growDirection.Positive)).toBeTruthy()
+    })
+})
+
+describe("It makes sure one segment cannot be inside of another", () => {
+    const pas = new PhysicalAddressSpace(12, 10);
+
+    const pasCode = new Segment(segmentType.code, 0, 2, growDirection.Positive);
+    const pasHeap = new Segment(segmentType.heap, 2, 2, growDirection.Positive);
+
+    const pasStack = new Segment(segmentType.stack, 32, 2, growDirection.Negative);
+    const pasExtra = new Segment(segmentType.extra, 26, 2, growDirection.Positive);
+
+    addSegmentToPAS(pas, pasCode);
+    addSegmentToPAS(pas, pasHeap);
+    addSegmentToPAS(pas, pasStack);
+    addSegmentToPAS(pas, pasExtra);
+
+    it("Tries to surround a segment with a positive growth segment", () => {
+        expect(() => pas.validSegmentCreationOrChange(pasCode, 0, 16, growDirection.Positive)).toThrowError('overlaps')
+    })
+
+    it("Tries to surround a segment with a negative growth segment", () => {
+        expect(() => pas.validSegmentCreationOrChange(pasStack, 32, 10, growDirection.Negative)).toThrowError('overlaps')
+    })
+})
