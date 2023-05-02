@@ -3,6 +3,7 @@ import { inRange } from "./constants/inRange";
 import type { IPhysicalAddressSpace } from "./interfaces/IPhysicalAddressSpace";
 import type { IVirtualAddressSpace } from "./interfaces/IVirtualAddressSpace";
 import type { ISegment } from "./interfaces/ISegment";
+import { numbersOverlap } from "./constants/numbersOverlap";
 
 class PhysicalAddressSpace implements IPhysicalAddressSpace {
     paLength: number;
@@ -58,45 +59,34 @@ class PhysicalAddressSpace implements IPhysicalAddressSpace {
         const throwOverlapError = (editSegment: string, overlappedSegment: string) => {
           throw new Error(`Segment ${editSegment} overlaps with segment ${overlappedSegment}`);
         };
-  
-        if (segmentGrowDirection === growDirection.Negative) {
-          if (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
+
+        if(numbersOverlap(this.segmentList[i].base, this.segmentList[i].bounds, newBase, newBase + newSize*segmentGrowDirection)) {
+          if(segment !== null) {
+            throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+          }
+
+          return false;
+        }
+
+        if (segmentGrowDirection === growDirection.Positive) {
+          if (this.segmentList[i].growDirection === growDirection.Positive && (inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds))) {
             if (segment !== null) {
-              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
+              throwOverlapError(segment.type.name, this.segmentList[i].type.name)
             }
-            return false;
-          } else if (inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive) {
-            if (segment !== null) {
-              throwOverlapError(segment.type.name, this.segmentList[i].type.name); 
-            }
-            return false;
-          } else if ((inRange(newBase + newSize*segmentGrowDirection + 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
-            if (segment !== null) {
-              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
-            }
-            return false;
-          } else if ((inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds)) && this.segmentList[i].growDirection === growDirection.Negative) {
-            if (segment !== null) {
-              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
-            }
+
             return false;
           }
-        } else if (segmentGrowDirection === growDirection.Positive) {
-          if ((inRange(newBase, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Positive)) {
+        } else if (segmentGrowDirection === growDirection.Negative) {
+          if (this.segmentList[i].growDirection === growDirection.Positive && (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection, this.segmentList[i].base, this.segmentList[i].bounds))) {
             if (segment !== null) {
               throwOverlapError(segment.type.name, this.segmentList[i].type.name);
             }
-            return false;
-          } else if (inRange(newBase + 1, this.segmentList[i].base, this.segmentList[i].bounds) && this.segmentList[i].growDirection === growDirection.Negative) {
+            return false; 
+          } else if (this.segmentList[i].growDirection === growDirection.Negative && (inRange(newBase - 1, this.segmentList[i].base, this.segmentList[i].bounds) || inRange(newBase + newSize*segmentGrowDirection +1, this.segmentList[i].base, this.segmentList[i].bounds) )) {
             if (segment !== null) {
               throwOverlapError(segment.type.name, this.segmentList[i].type.name);
             }
-            return false;
-          } else if (inRange(newBase + newSize - 1, this.segmentList[i].base, this.segmentList[i].bounds)) {
-            if (segment !== null) {
-              throwOverlapError(segment.type.name, this.segmentList[i].type.name);
-            }
-            return false;
+            return false; 
           }
         }
       }
