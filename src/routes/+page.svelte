@@ -136,7 +136,8 @@ function translateAddress(currentAddressSpace: number, addressTranslationVal: nu
 
 function calculateSegmentOffset(): string {
     if (currentSegment!.growDirection === growDirection.Negative) {
-        return Math.abs(((currentSegment!.vaBase - 1) - addressTranslationValue!)).toString(2).padStart(sim.pas.vaLength - 2, '0');
+        // With a negative growth segment, the offset is calculated from the max bounds of the segment
+        return Math.abs( (sim.pas.vaSize*((currentSegment!.type.number)/4)) - addressTranslationValue!).toString(2).padStart(sim.pas.vaLength - 2, '0');
     }
     
     return Math.abs((addressTranslationValue! - currentSegment!.vaBase)).toString(2).padStart(sim.pas.vaLength - 2, '0');
@@ -306,8 +307,8 @@ function deleteBuild(buildName: string): void {
             <option value="{2}">Bin</option>
         </select>
         <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
-        <p>Physical: {virtualAddressToPhysical !== null ? virtualAddressToPhysical : 'N/A'}</p>
-        <p>Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span><span>{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
+        <p>Physical: {pasIndicatorText !== null ? pasIndicatorText : 'N/A'}</p>
+        <p>Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span><span class="ml-2">{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
         <br> 
     </div>
     <div class="relative right-0 text-right inline-block">
