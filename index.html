@@ -6,17 +6,17 @@
 	<link rel="icon" href="./favicon.png" />
 	<meta name="viewport" content="width=device-width" />
 	<meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.dc109dea.css" rel="stylesheet">
-		<link href="./_app/immutable/assets/_page.b3b432fa.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.f6a78de1.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.90094d9d.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.0a761664.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/paths.97e9a442.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.8acace6a.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.9548cda6.js">
+		<link href="./_app/immutable/assets/_layout.c8097b8a.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page.592d654b.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.de86a4e4.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.a0aa760d.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.8b9eb682.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/paths.ea3c7821.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.80cc5342.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.31edfbff.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.4fea4417.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.6baaa416.js">
 </head>
 
 <body data-sveltekit-preload-data="hover" class="w-screen bg-gh-dark text-blue-100">
@@ -27,31 +27,32 @@
 
 
 
+<nav class="flex w-full bg-gray-800 p-4"><div class="w-2/6"><h1 class="text-xl"><a href="/">Segmentation Simulator</a></h1></div>
+    <div class="text-right w-4/6"><div><a class="inline-block mr-2" href="/">Simulator</a>
+            <a class="inline-block mr-2" href="/about_segmentation">Concept</a>
+            <a class="inline-block" href="/about_architecture">Architecture</a></div></div></nav>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <title>Segmentation Simulator</title>
 
 
 
-<h1 class="text-center text-5xl">Segmentation Simulator</h1>
-<div class="text-center font-bold"><a href="/about_segmentation" class="text-blue-500">About Segmentation</a>
-    <a href="/about_architecture" class="text-red-500">Architecture of Simulator</a></div>
-
-<div class="flex w-full"><div style="margin-right: 45%"><label for="translateVA">Address Translation:</label>
+<div class="flex w-full mt-4"><div style="margin-right: 45%"><label for="translateVA">Address Translation:</label>
         
-        <input type="text" id="translateVA"  class="bg-gray-900 svelte-1syeghw">
+        <input type="text" id="translateVA"  class="text-input svelte-to7uyt">
         <br>
         
         <label for="" class="ml-5">To:</label>
-        <select name="" id="" class="mt-2 rounded-md svelte-1syeghw"><option value="10" selected>Dec</option><option value="16">Hex</option><option value="2">Bin</option></select>
+        <select name="" id="" class="mt-2 rounded-md svelte-to7uyt"><option value="10" selected>Dec</option><option value="16">Hex</option><option value="2">Bin</option></select>
         <p>Segment: N/A</p>   
         <p>Physical: N/A</p>
-        <p>Explicit: <span class="text-pink-500"></span><span>N/A</span></p>
+        <p>Explicit: <span class="text-pink-500"></span><span class="ml-2">N/A</span></p>
         <br></div>
-    <div class="relative right-0 text-right inline-block"><label for="">PA Length</label>
-            <input type="number" value="12" class="bg-gray-900 svelte-1syeghw">
-            <br>
-            <label for="">VA Length</label>
-            <input type="number" value="10" class="bg-gray-900 svelte-1syeghw"></div></div>
+    <div class="relative right-0 text-right inline-block"><div><label for="">PA Length</label>
+                <input type="number" value="12" class="text-input svelte-to7uyt">
+                <br>
+                <label for="" class="inline-block mt-2">VA Length</label>
+                <input type="number" value="10" class="text-input mt-2 svelte-to7uyt"></div></div></div>
 
 <p class="text-xl text-center mb-2">Virtual Address Space 0</p>
 <div class="w-screen h-28 bg-gray-800 select-none text-white">
@@ -72,7 +73,7 @@
 
 
 
-<div class="flex justify-center items-center mt-1"><button disabled class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-1syeghw" title="Previous Address Space"><i class="bi bi-arrow-left-circle-fill"></i></button>
+<div class="flex justify-center items-center mt-1"><button disabled class="p-2 enabled:bg-red-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-to7uyt" title="Previous Address Space"><i class="bi bi-arrow-left-circle-fill"></i></button>
     <table class="text-center mx-2"><thead><tr class="bg-gray-900"><th>Name</th>
                 <th>Number</th>
                 <th>Base</th>
@@ -81,33 +82,33 @@
                 <th>Direction</th></tr></thead>
         <tbody class="bg-gray-800"><tr><td>Code</td>
                         <td class="text-center">00</td>
-                        <td><input type="number" value="0" class="w-24 bg-gray-900 svelte-1syeghw"></td>
-                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td><input type="number" value="0" class="w-24 bg-gray-900 svelte-to7uyt"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-to7uyt"></td>
                         <td>255</td>
-                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                        <td><select name="" id="" value="1" class="svelte-to7uyt"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
                     </tr><tr><td>Heap</td>
                         <td class="text-center">01</td>
-                        <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
-                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-to7uyt"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-to7uyt"></td>
                         <td>511</td>
-                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                        <td><select name="" id="" value="1" class="svelte-to7uyt"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
                     </tr><tr><td>Stack</td>
                         <td class="text-center">10</td>
-                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-1syeghw"></td>
-                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-to7uyt"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-to7uyt"></td>
                         <td>512</td>
-                        <td><select name="" id="" value="-1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                        <td><select name="" id="" value="-1" class="svelte-to7uyt"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
                     </tr><tr><td>Extra</td>
                         <td class="text-center">11</td>
-                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-1syeghw"></td>
-                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-1syeghw"></td>
+                        <td><input type="number" value="768" class="w-24 bg-gray-900 svelte-to7uyt"></td>
+                            <td><input type="number" value="256" class="w-24 bg-gray-900 svelte-to7uyt"></td>
                         <td>1023</td>
-                        <td><select name="" id="" value="1" class="svelte-1syeghw"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
+                        <td><select name="" id="" value="1" class="svelte-to7uyt"><option value="1">Positive</option><option value="-1">Negative</option></select></td>
                     </tr></tbody></table>
-    <button disabled class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-1syeghw" title="Next Address Space"><i class="bi bi-arrow-right-circle-fill"></i></button></div>
+    <button disabled class="p-2 enabled:bg-blue-600 disabled:bg-gray-600 rounded-md mt-2 text-blue-50 h-10 svelte-to7uyt" title="Next Address Space"><i class="bi bi-arrow-right-circle-fill"></i></button></div>
 
-<div class="text-center mt-4 mb-3"><button  class="enabled:bg-red-600 disabled:bg-gray-600 rounded-md svelte-1syeghw">Delete Address Space</button>
-    <button  class="enabled:bg-blue-600 disabled:bg-gray-600 rounded-md svelte-1syeghw">New Address Space</button></div>
+<div class="text-center mt-4 mb-3"><button  class="enabled:bg-red-600 disabled:bg-gray-600 rounded-md svelte-to7uyt">Delete Address Space</button>
+    <button  class="enabled:bg-blue-600 disabled:bg-gray-600 rounded-md svelte-to7uyt">New Address Space</button></div>
 
 <p class="text-center text-xl">Physical Address Space</p>
 <p class="text-center">25% Full</p>
@@ -138,22 +139,22 @@
     <br>
     
     <br><br>
-    <input type="text" placeholder="Build name" class="bg-gray-800 svelte-1syeghw" value="">
-    <button class="bg-blue-900 p-2 rounded-md svelte-1syeghw">Save Build</button>
-    <button class="bg-cyan-900 p-2 rounded-md svelte-1syeghw">Output Build</button>
+    <input type="text" placeholder="Build name" class="bg-gray-800 svelte-to7uyt" value="">
+    <button class="bg-blue-900 p-2 rounded-md svelte-to7uyt">Save Build</button>
+    <button class="bg-cyan-900 p-2 rounded-md svelte-to7uyt">Output Build</button>
 
     <br><br>
 
     <form><textarea rows="20" cols="80" id="jsonInput" name="jsonInput" class="border-2 border-black bg-gray-600"></textarea>
         <br>
-        <button type="submit" class="bg-cyan-900 p-2 w-30 h-10 rounded-md svelte-1syeghw">Submit JSON</button></form>
+        <button type="submit" class="bg-cyan-900 p-2 w-30 h-10 rounded-md svelte-to7uyt">Submit JSON</button></form>
 </div>
 
 
 			
 			<script>
 				{
-					__sveltekit_16gkj17 = {
+					__sveltekit_rlgikc = {
 						base: new URL(".", location).pathname.slice(0, -1),
 						env: {}
 					};
@@ -163,8 +164,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.f6a78de1.js"),
-						import("./_app/immutable/entry/app.8acace6a.js")
+						import("./_app/immutable/entry/start.de86a4e4.js"),
+						import("./_app/immutable/entry/app.80cc5342.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
