@@ -278,44 +278,40 @@ function deleteBuild(buildName: string): void {
 }
 </script>
 
-<div class="flex w-full mt-4">
-    <div style="margin-right: 45%">
-        <label for="translateVA">Address Translation:</label>
-        <!-- {#if addressInputBase === 16}
-            <input type="text" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
-        {:else}
-            <input type="number" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
-        {/if} -->
-        <input type="text" bind:value={addressInputValue} id="translateVA" disabled={pasEmpty} class="text-input">
-        <br>
-        <!-- <label for="">From:</label>
-        <select name="" id="" bind:value={addressInputBase} class="rounded-md">
+<div class="grid grid-cols-2 w-full mt-4">
+    <div>
+
+        <label for="addr_translation">Address Translation:</label>
+        <input id="addr_translation" type="text" class="bg-gray-700 p-2 rounded-md" bind:value={addressInputValue}>
+
+        <label for="base">To:</label>
+        <select name="" id="base" class="bg-gray-800 p-2 rounded-md" bind:value={addressTranslationBase}>
             <option value="{10}">Dec</option>
             <option value="{16}">Hex</option>
             <option value="{2}">Bin</option>
-        </select> -->
-        <label for="" class="ml-5">To:</label>
-        <select name="" id="" bind:value={addressTranslationBase} class="mt-2 rounded-md">
-            <option value="{10}" selected>Dec</option>
-            <option value="{16}">Hex</option>
-            <option value="{2}">Bin</option>
         </select>
+
         <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
-        <p>Physical: {pasIndicatorText !== null ? pasIndicatorText : 'N/A'}</p>
-        <p>Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span><span class="ml-2">{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
-        <br> 
+
+        <div class="grid grid-cols-2 w-full">
+            <p class="grid-cols-1">Physical: {pasIndicatorText !== null ? pasIndicatorText : 'N/A'}</p>
+            <p class="grid-cols-1">Explicit: <span class="text-pink-500">{currentSegmentNumber !== null ? currentSegmentNumber : ""}</span> <span class="ml-2">{currentSegmentOffset !== null ? currentSegmentOffset : "N/A"}</span></p>
     </div>
-    <div class="relative right-0 text-right inline-block">
+    </div>
+
+    <div class="text-right">
         {#key resetLengthInput}
-            <div>
-                <label for="">PA Length</label>
-                <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))} class="text-input">
-                <br>
-                <label for="" class="inline-block mt-2">VA Length</label>
-                <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))} class="text-input mt-2">
+            <div class="mr-10">
+                <label for="">PA Length (Bits):</label>
+                <input type="text" class="bg-gray-700 p-2 rounded-md" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))}>
+            </div>
+            <div class="mr-10 mt-2">
+                <label for=""> VA Length (Bits):</label>
+                <input type="text" class="bg-gray-700 p-2 rounded-md" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))}>
             </div>
         {/key}
     </div>
+
 </div>
 
 <VirtualAddressSpace currentSegment={currentSegment} addressTranslationValue={addressTranslationValue} sim={sim} pasEmpty={pasEmpty} currentAddressSpace={currentAddressSpace} animation={animation} vasIndicatorText={vasIndicatorText}/>
