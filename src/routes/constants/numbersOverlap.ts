@@ -1,9 +1,11 @@
-export const numbersOverlap = (n1: number, n2: number, m1: number, m2: number) => {
-  if (n1 > m1 && n2 < m2) {
+// Designed so that the order of the numbers and the growth direction of the segment doesn't matter
+
+export const numbersOverlap = (base1: number, bounds1: number, base2: number, bounds2: number): boolean => {
+  if (base1 > base2 && bounds1 < bounds2) {
     return true;
   }
 
-  if (n1 < m1 && n2 > m2) {
+  if (base1 < base2 && bounds1 > bounds2) {
     return true;
   }
 
