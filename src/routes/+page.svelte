@@ -278,13 +278,7 @@ function deleteBuild(buildName: string): void {
 }
 </script>
 
-<h1 class="text-center text-5xl">Segmentation Simulator</h1>
-<div class="text-center font-bold">
-    <a href="{base}/about_segmentation" class="text-blue-500">About Segmentation</a>
-    <a href="{base}/about_architecture" class="text-red-500">Architecture of Simulator</a>
-</div>
-
-<div class="flex w-full">
+<div class="flex w-full mt-4">
     <div style="margin-right: 45%">
         <label for="translateVA">Address Translation:</label>
         <!-- {#if addressInputBase === 16}
@@ -314,9 +308,9 @@ function deleteBuild(buildName: string): void {
     <div class="relative right-0 text-right inline-block">
         {#key resetLengthInput}
             <div>
-            <label for="">PA Length</label>
+                <label for="">PA Length</label>
                 <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))} class="text-input">
-            <br>
+                <br>
                 <label for="" class="inline-block mt-2">VA Length</label>
                 <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))} class="text-input mt-2">
             </div>
