@@ -291,7 +291,7 @@ function deleteBuild(buildName: string): void {
         {:else}
             <input type="number" bind:value={addressInputValue} id="translateVA" disabled={sim.pas.addressSpaceList.length === 0} class="bg-gray-900 w-28" min="0">
         {/if} -->
-        <input type="text" bind:value={addressInputValue} id="translateVA" disabled={pasEmpty} class="bg-gray-900">
+        <input type="text" bind:value={addressInputValue} id="translateVA" disabled={pasEmpty} class="text-input">
         <br>
         <!-- <label for="">From:</label>
         <select name="" id="" bind:value={addressInputBase} class="rounded-md">
@@ -312,11 +312,13 @@ function deleteBuild(buildName: string): void {
     </div>
     <div class="relative right-0 text-right inline-block">
         {#key resetLengthInput}
+            <div>
             <label for="">PA Length</label>
-            <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))} class="bg-gray-900">
+                <input type="number" value={sim.pas.paLength} on:change={(e) => changePALength(parseInt(e.target.value))} class="text-input">
             <br>
-            <label for="">VA Length</label>
-            <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))} class="bg-gray-900">
+                <label for="" class="inline-block mt-2">VA Length</label>
+                <input type="number" value={sim.pas.vaLength} on:change={(e) => changeVALength(parseInt(e.target.value))} class="text-input mt-2">
+            </div>
         {/key}
     </div>
 </div>
@@ -402,5 +404,9 @@ function deleteBuild(buildName: string): void {
 
     input, button, select { 
         @apply p-2;
+    }
+
+    .text-input {
+        @apply bg-gray-700 rounded-md;
     }
 </style>
