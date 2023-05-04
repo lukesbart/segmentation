@@ -13,7 +13,8 @@
         <div>
             <a class="inline-block mr-2" href="{base}/">Simulator</a>
             <a class="inline-block mr-2" href="{base}/about_segmentation">Concept</a>
-            <a class="inline-block" href="{base}/about_architecture">Architecture</a>
+            <a class="inline-block mr-2" href="{base}/about_architecture">Architecture</a>
+            <a class="inline-block" href="https://github.com/lukesbart/segmentation">Code</a>
         </div>
     </div>
 </nav>
