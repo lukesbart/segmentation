@@ -154,6 +154,10 @@ $: currentSegmentNumber = currentSegment !== null ? currentSegment.type.number.t
 $: currentSegmentOffset = currentSegment !== null && addressTranslationValue !== null ? calculateSegmentOffset() : null;
 
 $: addressTranslationResult = addressTranslationValue !== undefined && addressTranslationValue !== null && !pasEmpty ? sim.segmentNameFromVirtualAddress(currentAddressSpace, addressTranslationValue) : null
+
+// Temporary workaronud addressTranslationResult being null doesn't indicate segmentation fault
+$: segmentationFault = addressInputValue !== undefined && addressInputValue !== "" && addressInputValue !== null && addressTranslationValue !== null && sim.segmentNameFromVirtualAddress(currentAddressSpace, addressTranslationValue) === null ? true : false; 
+
 $: virtualAddressToPhysical = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue) : null
 $: virtualAddressToPhysicalDecimal = addressTranslationValue !== undefined && addressTranslationValue !== null ? translateAddress(currentAddressSpace, addressTranslationValue) : null;
 
@@ -291,7 +295,15 @@ function deleteBuild(buildName: string): void {
             <option value="{2}">Bin</option>
         </select>
 
-        <p>Segment: {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}</p>   
+        <p>
+            Segment: 
+            {#if !segmentationFault}
+                {addressTranslationResult !== null ? addressTranslationResult : 'N/A'}
+            {:else}
+                Segmentation Fault
+            {/if}
+
+        </p>
 
         <div class="grid grid-cols-2 w-full">
             <p class="grid-cols-1">Physical: {pasIndicatorText !== null ? pasIndicatorText : 'N/A'}</p>
