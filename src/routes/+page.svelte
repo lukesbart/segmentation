@@ -340,7 +340,7 @@ function deleteBuild(buildName: string): void {
             <tr class="bg-gray-900">
                 <th>Name</th>
                 <th>Number</th>
-                <th>Base</th>
+                <th>PAS Base</th>
                 <th>Size</th>
                 <th>Bounds</th>
                 <th>Direction</th>
