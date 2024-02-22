@@ -2,25 +2,19 @@
 
 A simulator of Segmentation for Operating Systems Winter 2023
 
-## Developing
+## Documentation
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Running this project
+Commands to run this project:
+* Dev: vite dev
+* Build: vite build
 
-```bash
-npm run dev
+## Contributing to this project
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## About Segmentation
 
-## Building
+## Architecture of Project
 
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Credits
+Original idea for simulator: [Miro Manestar](https://github.com/miromanestar/Segmentation-Sim)
+Original concept comes from OSTEP: [OSTEP Segmentation Chapter](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-segmentation.pdf)
